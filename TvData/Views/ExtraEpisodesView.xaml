@@ -1,0 +1,416 @@
+﻿<UserControl x:Class="Views.ExtraEpisodesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:TvData"
+             xmlns:behaviors="clr-namespace:TvData.Behaviors"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:BindingProxy x:Key="proxy"
+                            Data="{Binding}" />
+        <local:ExternalSourceColumnVisibilityConverter x:Key="ExternalSourceColumnVisibilityConverter" />        
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="70" />
+        </Grid.RowDefinitions>
+        <!--Directions-->
+        <TextBlock Text="The Following Episodes were found but were not in the existing list.  Select the episodes to be added then click Add.  Otherwise, click Cancel"
+                   TextWrapping="WrapWithOverflow"
+                   Margin="20,20,20,10"
+                   HorizontalAlignment="Center" />
+        <!--Extra Episodes DataGrid-->
+        <DataGrid Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  MaxWidth="1200"
+                  ItemsSource="{Binding ExtraEpisodes}">
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <!--Template="{DynamicResource AlbumExpanderTemplate}"-->
+                                        <Expander IsExpanded="True"
+                                                  Foreground="{StaticResource Foreground}">
+                                            <Expander.Header>
+                                                <DockPanel Cursor="Hand"
+                                                           Background="Transparent"
+                                                           Margin="0,4">
+                                                    <TextBlock FontWeight="600"
+                                                               Text=" Season " />
+                                                    <TextBlock FontWeight="600"
+                                                               Text="{Binding Name}"
+                                                               Margin="5,0" />
+                                                </DockPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
+            <DataGrid.Style>
+                <Style TargetType="{x:Type DataGrid}">
+                    <Setter Property="SelectionUnit"
+                            Value="CellOrRowHeader" />
+                    <Setter Property="GridLinesVisibility"
+                            Value="All" />
+                    <Setter Property="HorizontalGridLinesBrush"
+                            Value="#38383C" />
+                    <Setter Property="VerticalGridLinesBrush"
+                            Value="#38383C" />
+                    <Setter Property="HeadersVisibility"
+                            Value="All" />
+                    <Setter Property="BorderBrush"
+                            Value="Transparent" />
+                    <Setter Property="Background"
+                            Value="{StaticResource LightBackground}" />
+                    <Setter Property="RowBackground"
+                            Value="{StaticResource LightBackground}" />
+                    <Setter Property="CellStyle"
+                            Value="{DynamicResource DarkDataGridCell}" />
+                    <Setter Property="CanUserSortColumns"
+                            Value="False" />
+                    <Setter Property="behaviors:DataGridStyleBehaviour.SelectAllButtonTemplate"
+                            Value="{DynamicResource DataGridSelectAllButtonTemplate}" />
+                    <Style.Resources>
+                        <Style x:Key="ColumnHeaderGripperStyle"
+                               TargetType="{x:Type Thumb}">
+                            <Setter Property="Width"
+                                    Value="8" />
+                            <Setter Property="Background"
+                                    Value="Transparent" />
+                            <Setter Property="Cursor"
+                                    Value="SizeWE" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                        <Border Padding="{TemplateBinding Padding}"
+                                                Background="{TemplateBinding Background}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style x:Key="RowHeaderGripperStyle"
+                               TargetType="{x:Type Thumb}">
+                            <Setter Property="Width"
+                                    Value="8" />
+                            <Setter Property="Background"
+                                    Value="Transparent" />
+                            <Setter Property="Cursor"
+                                    Value="SizeNS" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Thumb}">
+                                        <Border Background="{TemplateBinding Background}"
+                                                Padding="{TemplateBinding Padding}"
+                                                SnapsToDevicePixels="True" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="IsSelected"
+                                    Value="{Binding IsSelected}" />
+                        </Style>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="SnapsToDevicePixels"
+                                    Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                                        <Grid>
+                                            <Border x:Name="BackgroundBorder"
+                                                    Grid.ColumnSpan="2"
+                                                    Background="{StaticResource BackgroundSelected}"
+                                                    BorderBrush="#38383C"
+                                                    BorderThickness="0,0,1,1" />
+                                            <TextBlock Foreground="{StaticResource Foreground}"
+                                                       FontWeight="SemiBold">
+													<InlineUIContainer>
+														<ContentPresenter Margin="3"
+                                                                          VerticalAlignment="Center" />
+													</InlineUIContainer>
+                                            </TextBlock>
+                                            <Thumb x:Name="PART_LeftHeaderGripper"
+                                                   HorizontalAlignment="Left"
+                                                   Style="{StaticResource ColumnHeaderGripperStyle}" />
+                                            <Thumb x:Name="PART_RightHeaderGripper"
+                                                   HorizontalAlignment="Right"
+                                                   Style="{StaticResource ColumnHeaderGripperStyle}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="SortDirection"
+                                                     Value="{x:Null}">
+                                                <Setter TargetName="BackgroundBorder"
+                                                        Property="Background"
+                                                        Value="{StaticResource BackgroundNormal}" />
+                                            </Trigger>
+                                            <Trigger Property="DisplayIndex"
+                                                     Value="0">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed"
+                                                        TargetName="PART_LeftHeaderGripper" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <Style TargetType="{x:Type DataGridRowHeader}">
+                            <Setter Property="Width"
+                                    Value="25" />
+                            <Setter Property="Cursor"
+                                    Value="Hand" />
+                            <Setter Property="Background"
+                                    Value="{StaticResource LightBackground}" />
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,1,1" />
+                            <Setter Property="BorderBrush"
+                                    Value="#38383C" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridRowHeader}">
+                                        <Grid>
+                                            <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Padding="{TemplateBinding Padding}"
+                                                    Margin="{TemplateBinding Margin}"
+                                                    SnapsToDevicePixels="True">
+                                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                                  VerticalAlignment="Center" />
+                                            </Border>
+                                            <Thumb x:Name="PART_TopHeaderGripper"
+                                                   VerticalAlignment="Top"
+                                                   Height="3"
+                                                   Style="{StaticResource RowHeaderGripperStyle}" />
+                                            <Thumb x:Name="PART_BottomHeaderGripper"
+                                                   VerticalAlignment="Bottom"
+                                                   Height="3"
+                                                   Style="{StaticResource RowHeaderGripperStyle}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver"
+                                                     Value="True">
+                                                <Setter Property="Background"
+                                                        Value="{DynamicResource BackgroundHighlighted}" />
+                                            </Trigger>
+                                            <Trigger Property="IsRowSelected"
+                                                     Value="True">
+                                                <Setter Property="Background"
+                                                        Value="{DynamicResource BackgroundSelected}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <ControlTemplate x:Key="DataGridSelectAllButtonTemplate"
+                                         TargetType="{x:Type Button}">
+                            <Grid Cursor="Hand">
+                                <Border x:Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        Margin="{TemplateBinding Margin}"
+                                        BorderBrush="#38383C"
+                                        BorderThickness="0,0,1,1"
+                                        SnapsToDevicePixels="True" />
+                                <!--<Rectangle  x:Name="Border" Fill="{StaticResource LightBackground}" SnapsToDevicePixels="True" />-->
+                                <Polygon   x:Name="Arrow"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Bottom"
+                                           Margin="8,8,3,3"
+                                           Opacity="0.15"
+                                           Fill="{StaticResource Foreground}"
+                                           Stretch="Uniform"
+                                           Points="0,10 10,10 10,0" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource BackgroundHighlighted}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver"
+                                         Value="False">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource BackgroundNormal}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Style.Resources>
+                </Style>
+            </DataGrid.Style>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="S"
+                                    Binding="{Binding SeasonNumber}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="40" />
+                <DataGridTextColumn Header="Ep"
+                                    Binding="{Binding EpisodeNumber}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="45" />
+                <DataGridTextColumn Header="Episode Name"
+                                    Binding="{Binding IMDB_EpisodeName,     UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="150"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=IMDB,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource ImdbDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Episode Name"
+                                    Binding="{Binding TMDB_EpisodeName,     UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="150"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TMDb,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TmdbDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Episode Name"
+                                    Binding="{Binding TvGuide_EpisodeName,  UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="150"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TvGuide,  Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TvGuideDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Episode Name"
+                                    Binding="{Binding TvRage_EpisodeName,   UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="150"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TvRage,   Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TvRageDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Episode Name"
+                                    Binding="{Binding Freebase_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="150"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=Freebase, Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource FreebaseDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Episode Name"
+                                    Binding="{Binding Alternative_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="150"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=Alternative, Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource AlternativeDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Aired Date"
+                                    Binding="{Binding IMDB_AiredDate,       UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="100"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=IMDB,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource ImdbDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Aired Date"
+                                    Binding="{Binding TMDB_AiredDate,       UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="100"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TMDb,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TmdbDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Aired Date"
+                                    Binding="{Binding TvGuide_AiredDate,    UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="100"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TvGuide,  Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TvGuideDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Aired Date"
+                                    Binding="{Binding TvRage_AiredDate,     UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="100"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TvRage,   Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TvRageDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Aired Date"
+                                    Binding="{Binding Freebase_AiredDate,   UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="100"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=Freebase, Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource FreebaseDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Aired Date"
+                                    Binding="{Binding Alternative_AiredDate,   UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="100"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=Alternative, Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource AlternativeDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="IMDB_ID"
+                                    Binding="{Binding IMDB_ImdbId,          UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                    Width="90"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=IMDB,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource ImdbDataGridCell}"
+                                    MinWidth="4" />
+                <DataGridTextColumn Header="Plot"
+                                    Binding="{Binding IMDB_Plot,            UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                    Width="600"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=IMDB,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource ImdbDataGridCell}"
+                                    MinWidth="4"
+                                    ElementStyle="{DynamicResource WrappingTextBlock}" />
+                <DataGridTextColumn Header="Overview"
+                                    Binding="{Binding TMDB_Overview,        UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                    Width="600"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TMDb,     Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TmdbDataGridCell}"
+                                    MinWidth="4"
+                                    ElementStyle="{DynamicResource WrappingTextBlock}" />
+                <DataGridTextColumn Header="Overview"
+                                    Binding="{Binding TvGuide_Overview,     UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                    Width="600"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TvGuide,  Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TvGuideDataGridCell}"
+                                    MinWidth="4"
+                                    ElementStyle="{DynamicResource WrappingTextBlock}" />
+                <DataGridTextColumn Header="Plot"
+                                    Binding="{Binding TvRage_Plot,          UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                    Width="600"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=TvRage,   Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource TvRageDataGridCell}"
+                                    MinWidth="4"
+                                    ElementStyle="{DynamicResource WrappingTextBlock}" />
+                <DataGridTextColumn Header="Overview"
+                                    Binding="{Binding Freebase_Overview,    UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                    Width="600"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=Freebase, Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource FreebaseDataGridCell}"
+                                    MinWidth="4"
+                                    ElementStyle="{StaticResource WrappingTextBlock}" />
+                <DataGridTextColumn Header="Overview"
+                                    Binding="{Binding Alternative_Overview, UpdateSourceTrigger=LostFocus}"
+                                    EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                    Width="600"
+                                    Visibility="{Binding Data.ExtraEpisodesExternalSourceType, Converter={StaticResource ExternalSourceColumnVisibilityConverter}, ConverterParameter=Alternative, Source={StaticResource proxy}}"
+                                    CellStyle="{StaticResource AlternativeDataGridCell}"
+                                    MinWidth="4"
+                                    ElementStyle="{StaticResource WrappingTextBlock}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Row="2"
+                    Margin="20">
+            <Button Content="Add"
+                    Width="75"
+                    Command="{Binding AddExtraEpisodesCommand}" />
+            <Button Content="Cancel"
+                    Width="75"
+                    Command="{Binding HideExtraEpisodesCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

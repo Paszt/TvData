@@ -1,0 +1,16 @@
+TvData:
+
+Add Copy if empty for TMDb overview, imdb plot, 
+
+COMPLETE: make an option to use the httpListener or not (add option checkbox to option grid)
+
+Change HtmlAgilityPack to CsQuery
+
+COMPLETE: ExternalSourceType.Freebase - add freebase type to converter, add freebase columns to additional episodes view datagrid
+
+
+When getting OnAir Tv Shows, check for duplicates (for some reason shows are shown twice via the API)
+
+
+COMPLETE: TvRage: if the overview is "• No Summary (Add Here)", don't import it.
+

@@ -1,0 +1,114 @@
+﻿<UserControl x:Class="Views.OptionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:TvData"
+             mc:Ignorable="d"
+             d:DesignWidth="600">
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="55" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Options"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           HorizontalAlignment="Center" />
+                <Grid Margin="0,20,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="370" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!--Save Folder-->
+                    <Label Content="Save Folder:"
+                           Grid.Column="0"
+                           VerticalAlignment="Center" />
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding SavePath, Source={x:Static local:MySettings.Default}}"
+                                 Grid.Column="0" />
+                        <Button Content=". . ."
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                Command="{Binding GetSavePathCommand}" />
+                    </Grid>
+
+                </Grid>
+                <StackPanel>
+                    <CheckBox Foreground="{StaticResource Foreground}"
+                              Margin="0,10"
+                              IsChecked="{Binding EnableHttpListener, Source={x:Static local:MySettings.Default}}">
+                        Enable HTTP Listener
+                    </CheckBox>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="20,0,0,30"
+                                IsEnabled="{Binding EnableHttpListener, Source={x:Static local:MySettings.Default}}">
+                        <Label Content="Port:"
+                               VerticalAlignment="Center" />
+                        <TextBox Width="100"
+                                 Margin="15,0"
+                                 Text="{Binding HttpListenerPort, Source={x:Static local:MySettings.Default}}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <Button Content="OK"
+                        Width="90"
+                        HorizontalAlignment="Right"
+                        Margin="0"
+                        Command="{Binding HideOptionsCommand}" />
+            </StackPanel>
+            <StackPanel Grid.Row="2"
+                        Margin="0,30"
+                        Opacity=".7">
+                <TextBlock Text="Main Window Keyboard Shortcuts"
+                           HorizontalAlignment="Center"
+                           FontWeight="Bold"
+                           FontSize="14" />
+                <!-- ItemsSource="{Binding Source={StaticResource KeyboardShortcutData}, XPath=Bindings/*}" -->
+                <DataGrid MaxWidth="400"
+                          HorizontalAlignment="Center"
+                          Margin="0,10"
+                          IsReadOnly="True"
+                          HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Action}"
+                                            Header="Action"
+                                            Width="200" />
+                        <DataGridTextColumn Binding="{Binding Shortcut}"
+                                            Header="Shortcut" />
+                    </DataGrid.Columns>
+                    <local:KeyboardShortcutRecord Action="Open File"
+                                                  Shortcut="Ctrl + o" />
+                    <local:KeyboardShortcutRecord Action="Save File"
+                                                  Shortcut="Ctrl + s" />
+                    <local:KeyboardShortcutRecord Action="Select All Episodes"
+                                                  Shortcut="Ctrl + a" />
+                    <local:KeyboardShortcutRecord Action="Invert Episode Selection"
+                                                  Shortcut="Ctrl + i" />
+                    <local:KeyboardShortcutRecord Action="Copy All Episodes to XML"
+                                                  Shortcut="Ctrl + c" />
+                    <local:KeyboardShortcutRecord Action="Copy Selected Episodes to XML"
+                                                  Shortcut="Ctrl + Shift + c" />
+                    <local:KeyboardShortcutRecord Action="Load Previous TVDb Id"
+                                                  Shortcut="Ctrl + ," />
+                    <local:KeyboardShortcutRecord Action="Load Next TVDb Id"
+                                                  Shortcut="Ctrl + ." />
+                    <!--<local:KeyboardShortcutRecord Action="Hide All Dialogs"
+                                              Shortcut="Esc" />-->
+                </DataGrid>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

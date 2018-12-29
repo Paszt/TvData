@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DrawingBrush x:Key="Layer_1" Stretch="Uniform"/>
+	<DrawingBrush x:Key="Layer_1_0" Stretch="Uniform"/>
+	<DrawingBrush x:Key="Layer_1_1" Stretch="Uniform"/>
+	<DrawingBrush x:Key="Layer_1_2" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M 0,10.0587C 0,13.568 1.18933,16.964 10.6667,16.964L 10.6667,16.964C 12.9973,16.964 14.8267,16.7573 16.26,16.3947L 16.26,16.3947C 16.9187,16.8906 19.44,18.44 19.88,18.144L 19.88,18.144C 20.3307,17.8386 19.9813,15.456 19.8027,14.5947L 19.8027,14.5947C 21.0707,13.336 21.3333,11.7093 21.3333,10.0587L 21.3333,10.0587C 21.3333,6.54932 20.1427,3.15332 10.6667,3.15332L 10.6667,3.15332C 1.18933,3.15332 0,6.54932 0,10.0587 Z M 4.23067,10.0587C 4.23067,8.15063 4.94933,6.30798 10.6667,6.30798L 10.6667,6.30798C 16.3827,6.30798 17.1013,8.15063 17.1013,10.0587L 17.1013,10.0587C 17.1013,11.9626 16.3827,13.8066 10.6667,13.8066L 10.6667,13.8066C 4.94933,13.8066 4.23067,11.9626 4.23067,10.0587 Z ">
+						<GeometryDrawing.Brush>
+							<LinearGradientBrush StartPoint="0.30365,-0.121454" EndPoint="1.59469,-0.121454">
+								<LinearGradientBrush.RelativeTransform>
+									<TransformGroup>
+										<SkewTransform CenterX="0.30365" CenterY="-0.121454" AngleX="15.5841" AngleY="0"/>
+										<RotateTransform CenterX="0.30365" CenterY="-0.121454" Angle="71.3267"/>
+									</TransformGroup>
+								</LinearGradientBrush.RelativeTransform>
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FF738560" Offset="0"/>
+									<GradientStop Color="#FF49503C" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
+</ResourceDictionary>

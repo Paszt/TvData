@@ -1,0 +1,1824 @@
+﻿<local:FlatWindow x:Class="MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="clr-namespace:TvData"
+                  xmlns:behaviors="clr-namespace:TvData.Behaviors"
+                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:views="clr-namespace:TvData.Views"
+                  Cursor="{Binding Cursor}"
+                  TitlebarHeight="40"
+                  ForceCursor="True"
+                  Height="500"
+                  Width="930"
+                  Background="{DynamicResource Background}"
+                  Foreground="{DynamicResource Foreground}"
+                  BorderColor="{Binding StatusBarColor}"
+                  MinHeight="400"
+                  MinWidth="930"
+                  ResizeMode="CanResizeWithGrip"
+                  Title="{Binding WindowTitle}">
+    <i:Interaction.Behaviors>
+        <behaviors:ActivateBehavior Activated="{Binding Activated, Mode=TwoWay}" />
+    </i:Interaction.Behaviors>
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <local:BindingProxy x:Key="proxy"
+                            Data="{Binding}" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:DateFormatConverter x:Key="DateFormatConverter" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding LoadFromFileCommand}"
+                    Key="O"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding SaveToFileCommand}"
+                    Key="S"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding SelectAllEpisodes}"
+                    Key="A"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding InvertEpisodeSelection}"
+                    Key="I"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding CopyXmlCommand}"
+                    Key="C"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding CopyXmlCommand}"
+                    Key="C"
+                    Modifiers="Control+Shift" />
+        <KeyBinding Command="{Binding PreviousIdCommand}"
+                    Key="OemComma"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding NextIdCommand}"
+                    Key="OemPeriod"
+                    Modifiers="Control" />
+        <KeyBinding Command="{Binding HideAllDialogsCommand}"
+                    Key="Escape" />
+    </Window.InputBindings>
+    <Grid Margin="5,0"
+          IsEnabled="{Binding MainGridIsEnabled}">
+        <!--Main View-->
+        <DockPanel Focusable="False">
+            <!--Top toolbar-->
+            <StackPanel Orientation="Horizontal"
+                        Margin="5,2"
+                        VerticalAlignment="Top"
+                        DockPanel.Dock="Top"
+                        KeyboardNavigation.IsTabStop="False"
+                        Focusable="False">
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Clear"
+                        Command="{Binding ClearCommand}">
+                    <Image Source="{DynamicResource NewFileDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Open File"
+                        Command="{Binding LoadFromFileCommand}">
+                    <Image Source="{DynamicResource OpenFileDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Save to file"
+                        Command="{Binding SaveToFileCommand}">
+                    <Image Source="{DynamicResource SaveDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Save Seasons to separate files"
+                        Command="{Binding SaveSeasonsToFileCommand}">
+                    <Image Source="{DynamicResource SaveAllDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Save As"
+                        Command="{Binding SaveAsToFileCommand}">
+                    <Image Source="{DynamicResource SaveAsDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Import Merge a file"
+                        Command="{Binding ImportMergeFileCommand}">
+                    <Image Source="{DynamicResource MergeDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Export to Excel"
+                        Command="{Binding ExportToExcelCommand}">
+                    <Image Source="{DynamicResource ExcelDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Separator />
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Copy XML to clipboard"
+                        Command="{Binding CopyXmlCommand}">
+                    <Image Source="{DynamicResource CopyDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Options"
+                        Command="{Binding ShowOptionsCommand}"
+                        HorizontalAlignment="Right">
+                    <Image Source="{DynamicResource GearDrawingImage}"
+                           Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="View TMDb TV Changes (Last 24 hours)"
+                        Command="{Binding ShowTmdbTvChangesCommand}"
+                        HorizontalAlignment="Right"
+                        Background="{Binding ChangesButtonBackground}">
+                    <Image Width="16"
+                           Height="16"
+                           SnapsToDevicePixels="True"
+                           Source="{DynamicResource PencilDrawingImage}" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="View TMDb On The Air TV Shows (Next 7 days)"
+                        Command="{Binding ShowTmdbTvOnAirCommand}"
+                        HorizontalAlignment="Right"
+                        Background="{Binding OnAirButtonBackground}"
+                        Content="ON AIR"
+                        FontWeight="Bold"
+                        BorderBrush="#FF666666"
+                        Margin="0,0,5,0" />
+                <Separator />
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="View TMDb On The Air TV Shows (Next 7 days)"
+                        Command="{Binding ShowNewTvCommand}"
+                        HorizontalAlignment="Right"
+                        Content="New TV"
+                        FontWeight="Bold"
+                        BorderBrush="#FF666666"
+                        Margin="5,0,5,0" />
+                <Separator />
+                <TextBlock Text="Language:"
+                           VerticalAlignment="Center"
+                           Margin="5" />
+                <ComboBox Width="50"
+                          Height="22"
+                          SelectedItem="{Binding Language}"
+                          ItemsSource="{Binding Iso639_1Values}"
+                          Style="{DynamicResource StandardComboBox}"
+                          Focusable="False">
+                    <!--<ComboBoxItem Content="en"/>
+					<ComboBoxItem Content="de"/>
+					<ComboBoxItem Content="ru"/>-->
+                </ComboBox>
+                <Button Content="XML"
+                        Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Show XML"
+                        Margin="5,0"
+                        Command="{Binding ShowXmlCommand}" />
+                <Menu>
+                    <MenuItem Header="New"
+                              Height="28">
+                        <MenuItem Header="Episodes"
+                                  Command="{Binding AddNewEpisodesCommand}" />
+                    </MenuItem>
+                    <MenuItem Height="28">
+                        <MenuItem.Header>
+                            <Image Source="{DynamicResource ClearInput}"
+                                   Width="22"
+                                   Height="22" />
+                        </MenuItem.Header>
+                        <MenuItem Header="Clear Episode Names"
+                                  Command="{Binding ClearEpisodeNamesCommand}">
+                            <MenuItem.Icon>
+                                <Image Source="{DynamicResource ClearInput}"
+                                       Width="16"
+                                       Height="16"
+                                       SnapsToDevicePixels="True"
+                                       Margin="4,0" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Clear Episode Overviews"
+                                  Command="{Binding ClearEpisodeOverviewsCommand}">
+                            <MenuItem.Icon>
+                                <Image Source="{DynamicResource ClearInput}"
+                                       Width="16"
+                                       Height="16"
+                                       SnapsToDevicePixels="True"
+                                       Margin="4,0" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Clear Episode First Aired"
+                                  Command="{Binding ClearEpisodeFirstAiredCommand}">
+                            <MenuItem.Icon>
+                                <Image Source="{DynamicResource ClearInput}"
+                                       Width="16"
+                                       Height="16"
+                                       SnapsToDevicePixels="True"
+                                       Margin="4,0" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Clear Episode Production Code"
+                                  Command="{Binding ClearEpisodeProductionCodeCommand}">
+                            <MenuItem.Icon>
+                                <Image Source="{DynamicResource ClearInput}"
+                                       Width="16"
+                                       Height="16"
+                                       SnapsToDevicePixels="True"
+                                       Margin="4,0" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+                <Button Margin="5,0"
+                        Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Title to aired date (attempts to convert Episode name to aired date)"
+                        Command="{Binding TitleToAiredDateCommand}">
+                    <Image Source="{DynamicResource CalendarDrawingImage}"
+                           Width="22"
+                           Height="22" />
+                </Button>
+                <Button Margin="5,0"
+                        Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Get All Info"
+                        Command="{Binding GetAllInfoCommand}">
+                    <Image Source="{DynamicResource ManOfSteelDrawingImage}"
+                           Width="22"
+                           Height="22" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Convert Title in date format to other format (via input dialog)"
+                        Command="{Binding ConvertDateTitleCommand}">
+                    <Image Source="{DynamicResource DateRangeDrawingImage}"
+                           Width="20"
+                           Height="20" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Paste from Clipboard to Alternative Columns"
+                        Command="{Binding PasteToAltCommand}">
+                    <Image Source="{DynamicResource PasteDrawingImage}"
+                           Width="20"
+                           Height="20" />
+                </Button>
+                <Separator />
+                <Button Margin="5,0"
+                        Style="{DynamicResource ToolbarButtonStyle}"
+                        ToolTip="Refresh Episode List (Fix missing entry row)"
+                        Command="{Binding FixEpisodesListCommand}">
+                    <Image Source="{DynamicResource RepairDrawingImage}"
+                           Width="20"
+                           Height="20" />
+                </Button>
+                <Separator />
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        Command="{Binding OpenVicelandWindowCommand}"
+                        ToolTip="Open Viceland Window">
+                    <Image Source="{DynamicResource VicelandDrawingImage}"
+                           Width="20"
+                           Height="20" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        Command="{Binding OpenSundanceWindowCommand}"
+                        ToolTip="Open SundanceTV Window">
+                    <Image Source="{DynamicResource SundanceTvDrawingImage}"
+                           Width="20"
+                           Height="20" />
+                </Button>
+            </StackPanel>
+            <!--StatusBar-->
+            <StatusBar DockPanel.Dock="Bottom"
+                       Background="{Binding StatusBarColor}"
+                       Margin="-5,0,-5,0">
+                <TextBlock Margin="3,1,3,3"
+                           Foreground="{StaticResource Foreground}"
+                           Text="{Binding StatusText}" />
+                <StatusBarItem HorizontalAlignment="Right"
+                               Margin="0,0,20,0">
+                    <Button Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                            Command="{Binding ShowOptionsCommand}"
+                            Cursor="Hand"
+                            Focusable="False">
+                        <Button.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="HttpListener (Chrome Extension)" />
+                                <StackPanel Margin="10,0,0,0">
+                                    <TextBlock Text="{Binding HttpListenerPort, StringFormat=Port: {0}, Source={x:Static local:MySettings.Default}}" />
+                                    <TextBlock>
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Text"
+                                                        Value="Status: Active" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HttpListenerActive}"
+                                                                 Value="False">
+                                                        <Setter Property="Text"
+                                                                Value="Status: Inactive" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Click to configure" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Grid>
+                            <Grid Visibility="{Binding HttpListenerActive, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Ellipse Fill="Lime"
+                                         Height="12"
+                                         Width="12">
+                                    <Ellipse.Effect>
+                                        <BlurEffect Radius="10" />
+                                    </Ellipse.Effect>
+                                </Ellipse>
+                                <Ellipse Fill="Lime"
+                                         Height="10"
+                                         Width="10" />
+                            </Grid>
+                            <Ellipse Fill="Gray"
+                                     Height="10"
+                                     Width="10"
+                                     Visibility="{Binding HttpListenerNotActive, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </Grid>
+                    </Button>
+                </StatusBarItem>
+            </StatusBar>
+            <!--Body -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <!--Series Info - All-->
+                <StackPanel Margin="0,0,0,5">
+                    <!--TVDb Id With Load Button Row-->
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,10"
+                                KeyboardNavigation.TabIndex="0">
+                        <!--MouseLeftButtonUp="{Binding TvdbIdLabelClick}"-->
+                        <Label x:Name="TVDbIdLabel"
+                               Content="_TVDb Id:"
+                               Margin="0,0,8,0"
+                               VerticalAlignment="Center"
+                               Target="{Binding ElementName=TvdbIdTextBox}"
+                               Cursor="{Binding TvdbLabelCursor}"
+                               Focusable="False">
+                            <Label.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding TvdbIdLabelClickCommand}" />
+                            </Label.InputBindings>
+                        </Label>
+                        <TextBox x:Name="TvdbIdTextBox"
+                                 Text="{Binding Data.SeriesInfo.id, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="100"
+                                 Height="20"
+                                 Margin="0,0,8,0"
+                                 KeyboardNavigation.TabIndex="0">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter"
+                                            Command="{Binding LoadFromTvdbCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Content="Load"
+                                Style="{DynamicResource StandardButton}"
+                                Command="{Binding LoadFromTvdbCommand}"
+                                Focusable="False" />
+                        <Button Content="&lt;"
+                                Style="{DynamicResource StandardButton}"
+                                ToolTip="Previous Id"
+                                Command="{Binding PreviousIdCommand}" />
+                        <Button Content="&gt;"
+                                Style="{DynamicResource StandardButton}"
+                                ToolTip="Next Id"
+                                Command="{Binding NextIdCommand}" />
+
+                        <Label Content="TMDb Id:"
+                               Margin="10,0,5,0"
+                               VerticalAlignment="Center"
+                               Cursor="Hand">
+                            <Label.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding TmdbIdLabelClickCommand}" />
+                            </Label.InputBindings>
+                        </Label>
+                        <TextBox Text="{Binding Data.SeriesInfo.TmdbId, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                 Width="60"
+                                 Height="20"
+                                 Margin="0,0,5,0"
+                                 Background="#323D35" />
+                        <Label Content="TV Guide Id:"
+                               Margin="10,0,5,0"
+                               VerticalAlignment="Center"
+                               Cursor="Hand">
+                            <Label.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding TvGuideIdLabelClickCommand}" />
+                            </Label.InputBindings>
+                        </Label>
+                        <TextBox Text="{Binding Data.SeriesInfo.TvGuideId, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="60"
+                                 Height="20"
+                                 Margin="0,0,5,0"
+                                 Background="#362D30" />
+                        <Label Content="TvRage Id:"
+                               Margin="10,0,5,0"
+                               VerticalAlignment="Center"
+                               Cursor="Hand">
+                            <Label.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding TvRageIdLabelClickCommand}" />
+                            </Label.InputBindings>
+                        </Label>
+                        <TextBox Text="{Binding Data.SeriesInfo.TvRageId, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"
+                                 Width="60"
+                                 Height="20"
+                                 Margin="0,0,5,0"
+                                 Background="#0A373D" />
+                        <Label Content="Freebase MId:"
+                               Margin="10,0,5,0"
+                               VerticalAlignment="Center"
+                               Cursor="Hand">
+                            <Label.InputBindings>
+                                <MouseBinding MouseAction="LeftClick"
+                                              Command="{Binding FreebaseMIdLabelClickCommand}" />
+                            </Label.InputBindings>
+                        </Label>
+                        <TextBox Text="{Binding Data.SeriesInfo.FreebaseMid, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="75"
+                                 Height="20"
+                                 Margin="0,0,5,0"
+                                 Background="{StaticResource FreebaseBackgroundBrush}" />
+                        <Button Content="Get Ids"
+                                Margin="5,0"
+                                Command="{Binding GetExternalIdsCommand}" />
+                    </StackPanel>
+                    <!--Series Information Textboxes-->
+                    <Grid DataContext="{Binding Data.SeriesInfo, Mode=TwoWay}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*"
+                                              MaxWidth="800" />
+                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="120" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label   Grid.Column="0"
+                                     Grid.Row="0"
+                                     Content="Series Name:" />
+                            <TextBox Grid.Column="0"
+                                     Grid.Row="1"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding SeriesName, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label   Grid.Column="1"
+                                     Grid.Row="0"
+                                     Content="First Aired:" />
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="1"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding FirstAired, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label   Grid.Column="2"
+                                     Grid.Row="0"
+                                     Content="Network:" />
+                            <TextBox Grid.Column="2"
+                                     Grid.Row="1"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding Network, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label   Grid.Column="3"
+                                     Grid.Row="0"
+                                     Content="Runtime:" />
+                            <TextBox Grid.Column="3"
+                                     Grid.Row="1"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding Runtime, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label   Grid.Column="0"
+                                     Grid.Row="2"
+                                     Content="Content Rating:" />
+                            <TextBox Grid.Column="0"
+                                     Grid.Row="3"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding ContentRating, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <Label   Grid.Column="1"
+                                     Grid.Row="2"
+                                     Content="IMDB Id:"
+                                     Cursor="Hand">
+                                <Label.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                                  Command="{Binding Data.ImdbIdLabelClickCommand, Source={StaticResource proxy}}" />
+                                </Label.InputBindings>
+                            </Label>
+                            <TextBox Grid.Column="1"
+                                     Grid.Row="3"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding IMDB_ID, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="#2E2810" />
+
+                            <Label   Grid.Column="2"
+                                     Grid.Row="2"
+                                     Content="Status:" />
+                            <TextBox Grid.Column="2"
+                                     Grid.Row="3"
+                                     Margin="0,2,5,5"
+                                     Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}" />
+
+                        </Grid>
+                        <StackPanel Grid.Column="1">
+                            <Label Content="Overview:" />
+                            <TextBox Style="{DynamicResource WrappingTextBox}"
+                                     Margin="0,2,0,5"
+                                     Height="79"
+                                     Text="{Binding Overview, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!--DataGrid Toolbar-->
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1">
+                    <!--<Button Style="{DynamicResource ToolbarButtonStyle}" ToolTip="Clear" Content="Single Line"/>
+				<Separator />-->
+                    <Menu Margin="0,4,0,0">
+                        <MenuItem Header="Select">
+                            <MenuItem Header="All"
+                                      Command="{Binding SelectAllEpisodes}" />
+                            <MenuItem Header="Invert"
+                                      Command="{Binding InvertEpisodeSelection}" />
+                        </MenuItem>
+                    </Menu>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Find &amp; Replace"
+                            Command="{Binding ShowFindReplaceCommand}">
+                        <Image Width="16"
+                               Height="16"
+                               Source="{DynamicResource FindReplaceDrawingImage}" />
+                    </Button>
+                    <Separator />
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Download informaton from IMDB.com"
+                            Command="{Binding GetImdbInfoCommand}">
+                        <Image Source="{DynamicResource ImdbDrawingImage}"
+                               Width="20"
+                               Height="20" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Download informaton from IMDB.com by date"
+                            Command="{Binding GetImdbByDateInfoCommand}">
+                        <Image Source="{DynamicResource ImdbDrawingImage}"
+                               Width="20"
+                               Height="20" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="{Binding ImdbColumnsButtonText}"
+                            Command="{Binding ToggleImdbColumnVisibility}"
+                            Background="{Binding ImdbColumnsButtonBackground}"
+                            Width="28"
+                            Height="28">
+                        <Image Source="{DynamicResource ColumnDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                    <Separator />
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Download informaton from themoviedb.org"
+                            Command="{Binding GetTmdbInfoCommand}">
+                        <Image Source="{DynamicResource TmdbDrawingImage}"
+                               Width="18"
+                               Height="18"
+                               Margin="2" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="{Binding TmdbColumnsButtonText}"
+                            Command="{Binding ToggleTmdbColumnVisibility}"
+                            Background="{Binding TmdbColumnsButtonBackground}"
+                            Width="28"
+                            Height="28">
+                        <Image Source="{DynamicResource ColumnDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                    <Separator />
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Download tvguide.com informaton"
+                            Command="{Binding GetTvGuideInfoCommand}">
+                        <Image Source="{DynamicResource TvGuideDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="{Binding TvGuideColumnsButtonText}"
+                            Command="{Binding ToggleTvGuideColumnVisibility}"
+                            Background="{Binding TvGuideColumnsButtonBackground}"
+                            Width="28"
+                            Height="28">
+                        <Image Source="{DynamicResource ColumnDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                    <Separator />
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Download TvRage information"
+                            Command="{Binding GetTvRageInfoCommand}">
+                        <Image Source="{DynamicResource TvRageDrawingImage}"
+                               Width="18"
+                               Height="18"
+                               Margin="2" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="{Binding TvRageColumnsButtonText}"
+                            Command="{Binding ToggleTvRageColumnVisibility}"
+                            Background="{Binding TvRageColumnsButtonBackground}"
+                            Width="28"
+                            Height="28">
+                        <Image Source="{DynamicResource ColumnDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                    <Separator />
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Download Freebase information"
+                            Command="{Binding GetFreebaseInfoCommand}">
+                        <Image Source="{DynamicResource FreebaseDrawingImage}"
+                               Width="16"
+                               Height="16"
+                               Margin="2" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="{Binding FreebaseColumnsButtonText}"
+                            Command="{Binding ToggleFreebaseColumnVisibility}"
+                            Background="{Binding FreebaseColumnsButtonBackground}"
+                            Width="28"
+                            Height="28">
+                        <Image Source="{DynamicResource ColumnDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                    <Separator />
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="Load Alternative information"
+                            Command="{Binding GetAlternativeInfoCommand}">
+                        <Image Source="{DynamicResource LeafDrawingImage}"
+                               Width="16"
+                               Height="16"
+                               Margin="2" />
+                    </Button>
+                    <Button Style="{DynamicResource ToolbarButtonStyle}"
+                            ToolTip="{Binding AlternativeColumnsButtonText}"
+                            Command="{Binding ToggleAlternativeColumnVisibility}"
+                            Background="{Binding AlternativeColumnsButtonBackground}"
+                            Width="28"
+                            Height="28">
+                        <Image Source="{DynamicResource ColumnDrawingImage}"
+                               Margin="2" />
+                    </Button>
+                </StackPanel>
+
+                <!--Episodes Datagrid-->
+                <!--ItemsSource="{Binding EpisodesCollectionView, UpdateSourceTrigger=PropertyChanged}"-->
+                <DataGrid Grid.Row="2"
+                          Margin="0,0,0,5"
+                          AutoGenerateColumns="False"
+                          FrozenColumnCount="2"
+                          ItemsSource="{Binding Data.Episodes, UpdateSourceTrigger=PropertyChanged}"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling">
+                    <DataGrid.GroupStyle>
+                        <!--<x:Static Member="GroupStyle.Default"/>-->
+                        <GroupStyle>
+                            <!--<GroupStyle.HeaderTemplate>
+
+							</GroupStyle.HeaderTemplate>-->
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <!--Template="{DynamicResource AlbumExpanderTemplate}"-->
+                                                <Expander IsExpanded="True"
+                                                          Foreground="{StaticResource Foreground}">
+                                                    <Expander.Header>
+                                                        <DockPanel Cursor="Hand"
+                                                                   Background="Transparent"
+                                                                   Margin="0,4">
+                                                            <TextBlock FontWeight="Bold"
+                                                                       Text=" Season " />
+                                                            <TextBlock FontWeight="Bold"
+                                                                       Text="{Binding Name}"
+                                                                       Margin="5,0" />
+                                                        </DockPanel>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Style>
+                        <Style TargetType="{x:Type DataGrid}">
+                            <Setter Property="SelectionUnit"
+                                    Value="CellOrRowHeader" />
+                            <Setter Property="GridLinesVisibility"
+                                    Value="All" />
+                            <Setter Property="HorizontalGridLinesBrush"
+                                    Value="#38383C" />
+                            <Setter Property="VerticalGridLinesBrush"
+                                    Value="#38383C" />
+                            <Setter Property="HeadersVisibility"
+                                    Value="All" />
+                            <Setter Property="BorderBrush"
+                                    Value="Transparent" />
+                            <Setter Property="Background"
+                                    Value="{StaticResource LightBackground}" />
+                            <Setter Property="RowBackground"
+                                    Value="{StaticResource LightBackground}" />
+                            <Setter Property="CellStyle"
+                                    Value="{DynamicResource SingleClickEditGridCell}" />
+                            <Setter Property="CanUserSortColumns"
+                                    Value="False" />
+                            <!--<Setter Property="VerticalContentAlignment" Value="Center"/>-->
+                            <Setter Property="behaviors:DataGridStyleBehaviour.SelectAllButtonTemplate"
+                                    Value="{DynamicResource DataGridSelectAllButtonTemplate}" />
+                            <Style.Resources>
+                                <Style x:Key="ColumnHeaderGripperStyle"
+                                       TargetType="{x:Type Thumb}">
+                                    <Setter Property="Width"
+                                            Value="8" />
+                                    <Setter Property="Background"
+                                            Value="Transparent" />
+                                    <Setter Property="Cursor"
+                                            Value="SizeWE" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border Padding="{TemplateBinding Padding}"
+                                                        Background="{TemplateBinding Background}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style x:Key="RowHeaderGripperStyle"
+                                       TargetType="{x:Type Thumb}">
+                                    <Setter Property="Width"
+                                            Value="8" />
+                                    <Setter Property="Background"
+                                            Value="Transparent" />
+                                    <Setter Property="Cursor"
+                                            Value="SizeNS" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        Padding="{TemplateBinding Padding}"
+                                                        SnapsToDevicePixels="True" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="IsSelected"
+                                            Value="{Binding IsSelected}" />
+                                </Style>
+                                <Style TargetType="{x:Type DataGridColumnHeader}">
+                                    <Setter Property="SnapsToDevicePixels"
+                                            Value="True" />
+                                    <!--<Setter Property="MinWidth" Value="4"/>-->
+                                    <!--<Setter Property="MinHeight" Value="28"/>-->
+                                    <!--<Setter Property="Cursor" Value="Hand"/>-->
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                                                <ControlTemplate.Resources>
+                                                    <!--Column Context Menus-->
+                                                    <ContextMenu x:Key="IMDB_EpisodeNameContextMenu">
+                                                        <MenuItem Header="Copy IMDB EpisodeNames"
+                                                                  Command="{Binding Data.CopyImdbEpisodeNames, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy IMDB EpisodeNames (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedImdbEpisodeNames, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TMDb_EpisodeNameContextMenu">
+                                                        <MenuItem Header="Copy TMDb EpisodeNames"
+                                                                  Command="{Binding Data.CopyTmdbEpisodeNames, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TMDb EpisodeNames (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTmdbEpisodeNames, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TvGuide_EpisodeNameContextMenu">
+                                                        <MenuItem Header="Copy TvGuide EpisodeNames"
+                                                                  Command="{Binding Data.CopyTvGuideEpisodeNames, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvGuide EpisodeNames (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTvGuideEpisodeNames, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TvRage_EpisodeNameContextMenu">
+                                                        <MenuItem Header="Copy TvRage EpisodeNames"
+                                                                  Command="{Binding Data.CopyTvRageEpisodeNames, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvRage EpisodeNames (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTvRageEpisodeNames, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="Alternative_EpisodeNameContextMenu">
+                                                        <MenuItem Header="Copy Alternative EpisodeNames"
+                                                                  Command="{Binding Data.CopyAlternativeEpisodeNames, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy Alternative EpisodeNames (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedAlternativeEpisodeNames, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+
+                                                    <ContextMenu x:Key="IMDB_AiredDateContextMenu">
+                                                        <MenuItem Header="Copy IMDB Aired Dates"
+                                                                  Command="{Binding Data.CopyImdbAiredDate, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy IMDB Aired Dates (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedImdbAiredDate, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TMDB_AiredDateContextMenu">
+                                                        <MenuItem Header="Copy TMDb Aired Dates"
+                                                                  Command="{Binding Data.CopyTmdbAiredDate, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TMDb Aired Dates (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTmdbAiredDates, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TvGuide_AiredDateContextMenu">
+                                                        <MenuItem Header="Copy TvGuide Aired Dates"
+                                                                  Command="{Binding Data.CopyTvGuideAiredDate, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvGuide Aired Dates (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTvGuideAiredDates, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TvRage_AiredDateContextMenu">
+                                                        <MenuItem Header="Copy TvRage Aired Dates"
+                                                                  Command="{Binding Data.CopyTvRageAiredDate, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvRage Aired Dates (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTvRageAiredDates, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="Alternative_AiredDateContextMenu">
+                                                        <MenuItem Header="Copy Alternative Aired Dates"
+                                                                  Command="{Binding Data.CopyAlternativeAiredDates, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy Alternative Aired Dates (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedAlternativeAiredDates, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+
+                                                    <ContextMenu x:Key="IMDB_ImdbIdContextMenu">
+                                                        <MenuItem Header="Copy IMDB IMDB_IDs"
+                                                                  Command="{Binding Data.CopyImdbImdbId, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy IMDB IMDB_IDs (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedImdbImdbId, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy IMDB IMDB_IDs (Selected Only, Down One)"
+                                                                  Command="{Binding Data.CopySelectedImdbImdbIdDownOne, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+
+                                                    <ContextMenu x:Key="IMDB_PlotContextMenu">
+                                                        <MenuItem Header="Copy IMDB Plots to Overviews"
+                                                                  Command="{Binding Data.CopyImdbPlot, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy IMDB Plots to Overviews (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedImdbPlots, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TMDB_OverviewContextMenu">
+                                                        <MenuItem Header="Copy TMDb Overviews"
+                                                                  Command="{Binding Data.CopyTmdbOverview, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TMDb Overviews (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTmdbOverviews, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TvGuide_OverviewContextMenu">
+                                                        <MenuItem Header="Copy TvGuide Overviews"
+                                                                  Command="{Binding Data.CopyTvGuideOverview, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvGuide Overviews (Blank only)"
+                                                                  Command="{Binding Data.CopyTvGuideOverviewToBlank, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvGuide Overviews (Selected only)"
+                                                                  Command="{Binding Data.CopySelectedTvGuideOverviews, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="TvRage_PlotContextMenu">
+                                                        <MenuItem Header="Copy TvRage Plots to Overviews"
+                                                                  Command="{Binding Data.CopyTvRagePlot, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy TvRage Plots to Overviews (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedTvRagePlots, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                    <ContextMenu x:Key="Alternative_OverviewContextMenu">
+                                                        <MenuItem Header="Copy Alternative Overviews"
+                                                                  Command="{Binding Data.CopyAlternativeOverview, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Copy Alternative Overviews (Selected Only)"
+                                                                  Command="{Binding Data.CopySelectedAlternativeOverviews, Source={StaticResource proxy}}"
+                                                                  Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{StaticResource CopyDrawingImage}"
+                                                                       Width="16"
+                                                                       Height="16"
+                                                                       SnapsToDevicePixels="True"
+                                                                       Margin="4,0" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+
+                                                </ControlTemplate.Resources>
+                                                <Grid>
+                                                    <!--<Grid>-->
+                                                    <!--<Path x:Name="SortArrow" Visibility="Collapsed" Data="M0,0 L1,0 0.5,1 z" Stretch="Fill"
+													  Grid.Column="1" Width="8" Height="6" Fill="{StaticResource Foreground}" Margin="0,0,8,0"
+													  VerticalAlignment="Center" RenderTransformOrigin="0.5,0.4" />-->
+                                                    <!--<Grid.ColumnDefinitions>
+														<ColumnDefinition Width="*"/>
+														<ColumnDefinition Width="Auto"/>
+													</Grid.ColumnDefinitions>-->
+                                                    <Border x:Name="BackgroundBorder"
+                                                            Grid.ColumnSpan="2"
+                                                            Background="{StaticResource BackgroundSelected}"
+                                                            BorderBrush="#38383C"
+                                                            BorderThickness="0,0,1,1" />
+                                                    <TextBlock Foreground="{StaticResource Foreground}"
+                                                               FontWeight="SemiBold">
+													<InlineUIContainer>
+														<ContentPresenter Margin="3"
+                                                                          VerticalAlignment="Center" />
+													</InlineUIContainer>
+                                                    </TextBlock>
+                                                    <!--</Grid>-->
+                                                    <Thumb x:Name="PART_LeftHeaderGripper"
+                                                           HorizontalAlignment="Left"
+                                                           Style="{StaticResource ColumnHeaderGripperStyle}" />
+                                                    <Thumb x:Name="PART_RightHeaderGripper"
+                                                           HorizontalAlignment="Right"
+                                                           Style="{StaticResource ColumnHeaderGripperStyle}" />
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="SortDirection"
+                                                             Value="{x:Null}">
+                                                        <Setter TargetName="BackgroundBorder"
+                                                                Property="Background"
+                                                                Value="{StaticResource BackgroundNormal}" />
+                                                    </Trigger>
+                                                    <!--<MultiTrigger>
+														<MultiTrigger.Conditions>
+															<Condition Property="IsMouseOver" Value="true" />
+															<Condition Property="SortDirection" Value="{x:Null}" />
+														</MultiTrigger.Conditions>
+														<Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource BackgroundHighlighted}"/>
+													</MultiTrigger>
+													<Trigger Property="SortDirection" Value="Ascending">
+														<Setter TargetName="SortArrow" Property="Visibility" Value="Visible"/>
+														<Setter TargetName="SortArrow" Property="RenderTransform">
+															<Setter.Value>
+																<RotateTransform Angle="180"/>
+															</Setter.Value>
+														</Setter>
+													</Trigger>
+													<Trigger Property="SortDirection" Value="Descending">
+														<Setter TargetName="SortArrow" Property="Visibility" Value="Visible"/>
+													</Trigger>-->
+                                                    <Trigger Property="DisplayIndex"
+                                                             Value="0">
+                                                        <Setter Property="Visibility"
+                                                                Value="Collapsed"
+                                                                TargetName="PART_LeftHeaderGripper" />
+                                                    </Trigger>
+                                                    <!--Context Menus-->
+                                                    <Trigger Property="Content"
+                                                             Value="IMDb Episode Name">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource IMDB_EpisodeNameContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TMDb Episode Name">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TMDb_EpisodeNameContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TvGuide Episode Name">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TvGuide_EpisodeNameContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TvRage Episode Name">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TvRage_EpisodeNameContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="Alt Episode Name">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource Alternative_EpisodeNameContextMenu}" />
+                                                    </Trigger>
+
+                                                    <Trigger Property="Content"
+                                                             Value="IMDB Aired Date">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource IMDB_AiredDateContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TMDb Aired Date">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TMDB_AiredDateContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TvGuide Aired Date">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TvGuide_AiredDateContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TvRage Aired Date">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TvRage_AiredDateContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="Alt Aired Date">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource Alternative_AiredDateContextMenu}" />
+                                                    </Trigger>
+
+                                                    <Trigger Property="Content"
+                                                             Value="IMDB IMDB_ID">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource IMDB_ImdbIdContextMenu}" />
+                                                    </Trigger>
+
+                                                    <Trigger Property="Content"
+                                                             Value="IMDB Plot">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource IMDB_PlotContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TMDb Overview">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TMDB_OverviewContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TvGuide Overview">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TvGuide_OverviewContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="TvRage Plot">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource TvRage_PlotContextMenu}" />
+                                                    </Trigger>
+                                                    <Trigger Property="Content"
+                                                             Value="Alt Overview">
+                                                        <Setter Property="ContextMenu"
+                                                                Value="{DynamicResource Alternative_OverviewContextMenu}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <Style TargetType="{x:Type DataGridRowHeader}">
+                                    <Setter Property="Width"
+                                            Value="25" />
+                                    <Setter Property="Cursor"
+                                            Value="Hand" />
+                                    <Setter Property="Background"
+                                            Value="{StaticResource LightBackground}" />
+                                    <Setter Property="BorderThickness"
+                                            Value="0,0,1,1" />
+                                    <Setter Property="BorderBrush"
+                                            Value="#38383C" />
+                                    <!--<Setter Property="ContextMenu" Value="{DynamicResource RowHeaderContextMenu}" />-->
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type DataGridRowHeader}">
+                                                <ControlTemplate.Resources>
+                                                    <ContextMenu x:Key="RowHeaderContextMenu">
+                                                        <MenuItem Header="Selected to XML"
+                                                                  Command="{Binding Data.SelectedRowsToXmlCommand, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{DynamicResource CopyDrawingImage}" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Edit Season Number"
+                                                                  Command="{Binding Data.EditSelectedRowsSeasonNumberCommand, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{DynamicResource PencilDrawingImage}" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Alter Episode Number"
+                                                                  Command="{Binding Data.EditSelectedRowsEpisodeNumberCommand, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="{DynamicResource LightningDrawingImage}"
+                                                                       Height="20"
+                                                                       Margin="2" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Remove Aired Date"
+                                                                  Command="{Binding Data.RemoveSelectedRowsAiredDateCommand, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Grid>
+                                                                    <Image Source="{DynamicResource CalendarDrawingImage}"
+                                                                           Height="20"
+                                                                           Margin="2" />
+                                                                    <Image Source="{DynamicResource SlashDrawingImage}"
+                                                                           Height="20"
+                                                                           Margin="2" />
+                                                                </Grid>
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Remove Production Code"
+                                                                  Command="{Binding Data.RemoveSelectedRowsProductionCodeCommand, Source={StaticResource proxy}}">
+                                                            <MenuItem.Icon>
+                                                                <Grid>
+                                                                    <Image Source="{DynamicResource FactoryDrawingImage}"
+                                                                           Height="20"
+                                                                           Margin="2" />
+                                                                    <Image Source="{DynamicResource SlashDrawingImage}"
+                                                                           Height="20"
+                                                                           Margin="2" />
+                                                                </Grid>
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                </ControlTemplate.Resources>
+                                                <Grid ContextMenu="{DynamicResource RowHeaderContextMenu}">
+                                                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Padding="{TemplateBinding Padding}"
+                                                            Margin="{TemplateBinding Margin}"
+                                                            SnapsToDevicePixels="True">
+                                                        <!--<StackPanel Orientation="Horizontal">-->
+                                                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                                          VerticalAlignment="Center" />
+                                                        <!--</StackPanel>-->
+                                                    </Border>
+                                                    <Thumb x:Name="PART_TopHeaderGripper"
+                                                           VerticalAlignment="Top"
+                                                           Height="3"
+                                                           Style="{StaticResource RowHeaderGripperStyle}" />
+                                                    <Thumb x:Name="PART_BottomHeaderGripper"
+                                                           VerticalAlignment="Bottom"
+                                                           Height="3"
+                                                           Style="{StaticResource RowHeaderGripperStyle}" />
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver"
+                                                             Value="True">
+                                                        <Setter Property="Background"
+                                                                Value="{DynamicResource BackgroundHighlighted}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsRowSelected"
+                                                             Value="True">
+                                                        <Setter Property="Background"
+                                                                Value="{DynamicResource BackgroundSelected}" />
+                                                    </Trigger>
+
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                                <ControlTemplate x:Key="DataGridSelectAllButtonTemplate"
+                                                 TargetType="{x:Type Button}">
+                                    <ControlTemplate.Resources>
+                                        <ContextMenu x:Key="SelectAllContextMenu"
+                                                     Visibility="{Binding Data.Data.IsEpisodeSelected, Source={StaticResource proxy}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                            <MenuItem Header="Move Selected IMDB Down One"
+                                                      Command="{Binding Data.MoveSelectedIMDbDownOne, Source={StaticResource proxy}}">
+                                                <!--<MenuItem.Icon>
+                                                    <Image Source="{StaticResource CopyDrawingImage}" Width="16" Height="16" SnapsToDevicePixels="True" Margin="4,0"/>
+                                                </MenuItem.Icon>-->
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </ControlTemplate.Resources>
+                                    <Grid Cursor="Hand"
+                                          ContextMenu="{StaticResource SelectAllContextMenu}">
+                                        <Border x:Name="Border"
+                                                Background="{TemplateBinding Background}"
+                                                Margin="{TemplateBinding Margin}"
+                                                BorderBrush="#38383C"
+                                                BorderThickness="0,0,1,1"
+                                                SnapsToDevicePixels="True" />
+                                        <!--<Rectangle  x:Name="Border" Fill="{StaticResource LightBackground}" SnapsToDevicePixels="True" />-->
+                                        <Polygon   x:Name="Arrow"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="8,8,3,3"
+                                                   Opacity="0.15"
+                                                   Fill="{StaticResource Foreground}"
+                                                   Stretch="Uniform"
+                                                   Points="0,10 10,10 10,0" />
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver"
+                                                 Value="True">
+                                            <Setter Property="Background"
+                                                    Value="{DynamicResource BackgroundHighlighted}" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver"
+                                                 Value="False">
+                                            <Setter Property="Background"
+                                                    Value="{DynamicResource BackgroundNormal}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Style.Resources>
+                        </Style>
+                    </DataGrid.Style>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="S"
+                                            Binding="{Binding SeasonNumber}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="40" />
+                        <DataGridTextColumn Header="Ep"
+                                            Binding="{Binding EpisodeNumber}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="45" />
+                        <DataGridTextColumn Header="Episode Name"
+                                            Binding="{Binding EpisodeName}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150" />
+                        <DataGridTextColumn Header="IMDb Episode Name"
+                                            Binding="{Binding IMDB_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150"
+                                            Visibility="{Binding Data.ImdbColumnsVisibility,     Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource ImdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TMDb Episode Name"
+                                            Binding="{Binding TMDB_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150"
+                                            Visibility="{Binding Data.TmdbColumnsVisibility,     Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TmdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TvGuide Episode Name"
+                                            Binding="{Binding TvGuide_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150"
+                                            Visibility="{Binding Data.TvGuideColumnsVisibility,  Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TvGuideDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TvRage Episode Name"
+                                            Binding="{Binding TvRage_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150"
+                                            Visibility="{Binding Data.TvRageColumnsVisibility,   Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TvRageDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="Freebase Episode Name"
+                                            Binding="{Binding Freebase_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150"
+                                            Visibility="{Binding Data.FreebaseColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource FreebaseDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="Alt Episode Name"
+                                            Binding="{Binding Alternative_EpisodeName, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="150"
+                                            Visibility="{Binding Data.AlternativeColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource AlternativeDataGridCell}"
+                                            MinWidth="4" />
+                        <!--<DataGridTextColumn Header="First Aired"          Binding="{Binding FirstAired}"                                         EditingElementStyle="{DynamicResource GridCellTextBox}"  Width="85" />-->
+                        <DataGridTemplateColumn Header="First Aired"
+                                                Width="105"
+                                                CellStyle="{StaticResource GridCellNoValidation}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <AdornerDecorator>
+                                        <ContentPresenter Content="{Binding FirstAired}" />
+                                        <!--<TextBlock Text="{Binding FirstAired}" />-->
+                                    </AdornerDecorator>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <DatePicker SelectedDate="{Binding FirstAired, Converter={StaticResource DateFormatConverter}}"
+                                                BorderBrush="Transparent"
+                                                HorizontalAlignment="Left">
+                                        <DatePicker.Resources>
+                                            <Style TargetType="DatePickerTextBox">
+                                                <Setter Property="Control.Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <TextBox x:Name="PART_TextBox"
+                                                                     Padding="0"
+                                                                     Text="{Binding Path=SelectedDate, StringFormat = {}{0:yyyy-MM-dd},
+																			  RelativeSource={RelativeSource AncestorType={x:Type DatePicker}}}"
+                                                                     Style="{DynamicResource GridCellTextBox}" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DatePicker.Resources>
+                                    </DatePicker>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="IMDB Aired Date"
+                                            Binding="{Binding IMDB_AiredDate, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100"
+                                            Visibility="{Binding Data.ImdbColumnsVisibility,     Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource ImdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TMDb Aired Date"
+                                            Binding="{Binding TMDB_AiredDate, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100"
+                                            Visibility="{Binding Data.TmdbColumnsVisibility,     Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TmdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TvGuide Aired Date"
+                                            Binding="{Binding TvGuide_AiredDate, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100"
+                                            Visibility="{Binding Data.TvGuideColumnsVisibility,  Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TvGuideDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TvRage Aired Date"
+                                            Binding="{Binding TvRage_AiredDate, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100"
+                                            Visibility="{Binding Data.TvRageColumnsVisibility,   Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TvRageDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="Freebase Aired Date"
+                                            Binding="{Binding Freebase_AiredDate, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100"
+                                            Visibility="{Binding Data.FreebaseColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource FreebaseDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="Alt Aired Date"
+                                            Binding="{Binding Alternative_AiredDate, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100"
+                                            Visibility="{Binding Data.AlternativeColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource AlternativeDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="IMDB_ID"
+                                            Binding="{Binding IMDB_ID}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="75" />
+                        <DataGridTextColumn Header="IMDB IMDB_ID"
+                                            Binding="{Binding IMDB_ImdbId, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="90"
+                                            Visibility="{Binding Data.ImdbColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource ImdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TMDb IMDbId"
+                                            Binding="{Binding TMDB_ImdbId, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="90"
+                                            Visibility="{Binding Data.TmdbColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TmdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="Overview"
+                                            Binding="{Binding Overview}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="IMDB Plot"
+                                            Binding="{Binding IMDB_Plot, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            Visibility="{Binding Data.ImdbColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource ImdbDataGridCell}"
+                                            MinWidth="4"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="TMDb Overview"
+                                            Binding="{Binding TMDB_Overview, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            Visibility="{Binding Data.TmdbColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TmdbDataGridCell}"
+                                            MinWidth="4"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="TvGuide Overview"
+                                            Binding="{Binding TvGuide_Overview, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            Visibility="{Binding Data.TvGuideColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TvGuideDataGridCell}"
+                                            MinWidth="4"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="TvRage Plot"
+                                            Binding="{Binding TvRage_Plot, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            Visibility="{Binding Data.TvRageColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TvRageDataGridCell}"
+                                            MinWidth="4"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="Freebase Overview"
+                                            Binding="{Binding Freebase_Overview, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            Visibility="{Binding Data.FreebaseColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource FreebaseDataGridCell}"
+                                            MinWidth="4"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="Alt Overview"
+                                            Binding="{Binding Alternative_Overview, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{DynamicResource WrappingTextBox}"
+                                            Width="600"
+                                            Visibility="{Binding Data.AlternativeColumnsVisibility, Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource AlternativeDataGridCell}"
+                                            MinWidth="4"
+                                            ElementStyle="{StaticResource WrappingTextBlock}" />
+                        <DataGridTextColumn Header="Production Code"
+                                            Binding="{Binding ProductionCode}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="122" />
+                        <DataGridTextColumn Header="TMDb Prod Code"
+                                            Binding="{Binding TMDB_ProductionCode, UpdateSourceTrigger=LostFocus}"
+                                            EditingElementStyle="{StaticResource GridCellTextBox}"
+                                            Width="122"
+                                            Visibility="{Binding Data.TmdbColumnsVisibility,     Source={StaticResource proxy}}"
+                                            CellStyle="{StaticResource TmdbDataGridCell}"
+                                            MinWidth="4" />
+                        <DataGridTextColumn Header="TvRage Id"
+                                            Binding="{Binding TvRageId}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="100" />
+                        <DataGridTextColumn Header="Freebase MId"
+                                            Binding="{Binding FreebaseMid}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="122" />
+                        <DataGridTextColumn Header="Freebase Id"
+                                            Binding="{Binding FreebaseId}"
+                                            EditingElementStyle="{DynamicResource GridCellTextBox}"
+                                            Width="122" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+        </DockPanel>
+
+        <!--XML Text-->
+        <views:XmlTextView Grid.RowSpan="10"
+                           Visibility="{Binding XmlTextVisibility}" />
+
+        <!-- Overlay -->
+        <!-- Visibility="{Binding OverlayVisibility}"-->
+        <Grid Grid.RowSpan="10"
+              Background="#4C000000"
+              Visibility="{Binding OverlayVisibility}"
+              Margin="-5,0,-5,25" />
+
+        <!--TMDb Search-->
+        <!-- Visibility="{Binding TmdbSearchVisibility}" -->
+        <views:TmdbSearchView Grid.RowSpan="10"
+                              Background="#AA000000"
+                              Visibility="{Binding TmdbSearchVisibility}"
+                              Margin="-5,0,-5,25" />
+
+        <!--Options-->
+        <!-- Visibility="{Binding OptionsVisibility}" -->
+        <views:OptionsView Grid.RowSpan="10"
+                           Background="{StaticResource Background}"
+                           Margin="-5,0,-5,25"
+                           Visibility="{Binding OptionsVisibility}" />
+
+        <!--Find & Replace-->
+        <!-- Visibility="{Binding FindReplaceVisibility}" -->
+        <views:FindAndReplaceView Grid.RowSpan="10"
+                                  Background="#AA000000"
+                                  Margin="-5,0,-5,25"
+                                  Visibility="{Binding FindReplaceVisibility}" />
+
+        <!--TMDb TV Changes-->
+        <!-- Visibility="{Binding TmdbChangesVisibility}"-->
+        <views:TmdbTvChanges Grid.RowSpan="10"
+                             Background="{StaticResource Background}"
+                             Margin="-5,0,-5,25"
+                             Visibility="{Binding TmdbChangesVisibility}" />
+
+        <!--TMDb TV Latest Additions -->
+        <!-- Visibility="{Binding TmdbNewTvVisibility}"-->
+        <views:TmdbTvLatestAdditionsView Grid.RowSpan="10"
+                                         Background="{StaticResource Background}"
+                                         Margin="-5,0,-5,25"
+                                         Visibility="{Binding TmdbNewTvVisibility}" />
+
+        <!--TMDb TV On The Air Shows-->
+        <!-- Visibility="{Binding TmdbOnAirVisibility}"-->
+        <views:TmdbTvOnTheAirView Grid.RowSpan="10"
+                                  Background="{StaticResource Background}"
+                                  Margin="-5,0,-5,25"
+                                  Visibility="{Binding TmdbOnAirVisibility}" />
+
+        <!--Extra Episodes View-->
+        <!-- Visibility="{Binding ExtraEpisodesVisibility}" -->
+        <views:ExtraEpisodesView Grid.RowSpan="10"
+                                 Background="{StaticResource Background}"
+                                 Margin="-5,0,-5,25"
+                                 Visibility="{Binding ExtraEpisodesVisibility}" />
+
+        <!--Selective Loading-->
+        <!-- Visibility="{Binding SelectiveLoadVisibility}" -->
+        <!--<Grid Grid.RowSpan="10" Background="#DD000000" Margin="-5,0,-5,25"  Visibility="{Binding SelectiveLoadVisibility}">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="75"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<TextBlock Text="Selective Load" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Grid.Row="1"/>
+				<Grid Grid.Row="2" Margin="0,20,0,0">
+					<StackPanel Orientation="Horizontal" Width="158" >
+						<TextBlock Text="TVDb ID:" VerticalAlignment="Center" Margin="5"/>
+						<TextBox Text="{Binding Data.SeriesInfo.id, UpdateSourceTrigger=PropertyChanged}" Width="100" Height="20" Margin="0,0,8,0"/>
+					</StackPanel>
+
+				</Grid>
+			</Grid>
+		</Grid>-->
+
+    </Grid>
+</local:FlatWindow>
+    
