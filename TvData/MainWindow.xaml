@@ -8,15 +8,18 @@
                   Cursor="{Binding Cursor}"
                   TitlebarHeight="40"
                   ForceCursor="True"
+                  MinHeight="400"
                   Height="500"
+                  MinWidth="930"
                   Width="930"
                   Background="{DynamicResource Background}"
                   Foreground="{DynamicResource Foreground}"
                   BorderColor="{Binding StatusBarColor}"
-                  MinHeight="400"
-                  MinWidth="930"
                   ResizeMode="CanResizeWithGrip"
-                  Title="{Binding WindowTitle}">
+                  Title="{Binding WindowTitle}"
+                  AllowDrop="True" 
+                  local:FileDragDropHandler.IsEnabled="True"
+                  local:FileDragDropHandler.Target="{Binding}">
     <i:Interaction.Behaviors>
         <behaviors:ActivateBehavior Activated="{Binding Activated, Mode=TwoWay}" />
     </i:Interaction.Behaviors>

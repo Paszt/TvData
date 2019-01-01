@@ -87,6 +87,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviors\DataGridStyleBehaviour.vb" />
     <Compile Include="Classes\EpisodeSimple.vb" />
+    <Compile Include="Classes\FileDragDropHandler.vb" />
     <Compile Include="Classes\HelperExtensions.vb" />
     <Compile Include="Classes\InfoRetrievers\AlternativeInfoRetriever.vb" />
     <Compile Include="Classes\InfoRetrievers\ImdbByDateInfoRetriever.vb" />

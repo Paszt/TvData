@@ -22,6 +22,13 @@ Class Application
             End Sub
         mainVM.ConfigureHttpListener()
         mainWin.Show()
+
+        If e.Args.Length > 0 Then
+            If IO.File.Exists(e.Args(0)) Then
+                Dim mvm = CType(mainWin.DataContext, MainViewModel)
+                mvm.LoadFromFile(e.Args(0))
+            End If
+        End If
     End Sub
 
     Private Sub Application_DispatcherUnhandledException(sender As Object, e As DispatcherUnhandledExceptionEventArgs) Handles Me.DispatcherUnhandledException

@@ -13,8 +13,7 @@ Imports TvData.Infrastructure
 Imports TvData
 
 Public Class MainViewModel
-    Implements INotifyPropertyChanged
-
+    Implements INotifyPropertyChanged, IFileDragDropTarget
     Private tmdb As TmdbApi
     Private WithEvents _infoRetriever As IInfoRetriever
 
@@ -1161,7 +1160,7 @@ Public Class MainViewModel
         Return IO.Path.Combine(My.Settings.SavePath, safeFilename & ".tvxml")
     End Function
 
-    Private Sub LoadFromFile(FileName As Object)
+    Friend Sub LoadFromFile(FileName As Object)
         'Cursor = Cursors.Wait
         SetBusyState("Loading File")
         Using objStreamReader As New StreamReader(CStr(FileName))
@@ -3400,6 +3399,21 @@ Public Class MainViewModel
         MyBase.Finalize()
         tmdb.Dispose()
         CloseListener()
+    End Sub
+
+    Public Sub OnFileDrop(filepaths() As String) Implements IFileDragDropTarget.OnFileDrop
+        If filepaths.Length > 1 Then
+            If Not MessageWindow.ShowDialog("Multiple files dropped. Only the first will be opened.", "Multiple Files Detected", True) Then
+                Exit Sub
+            End If
+        End If
+
+        Dim loadAsAlternative = Not MessageWindow.ShowDialog("Click Cancel to load file in Alternative columns", "Replace current data?", True)
+        If loadAsAlternative Then
+            LoadAlternativeInfo(filepaths(0))
+        Else
+            LoadFromFile(filepaths(0))
+        End If
     End Sub
 
 End Class
