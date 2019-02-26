@@ -1,0 +1,26 @@
+﻿<local:FlatWindow x:Class="StarzWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:local="clr-namespace:TvData"
+                  xmlns:views="clr-namespace:TvData.Views"
+                  mc:Ignorable="d"
+                  Title="Starz"
+                  Height="500"
+                  Width="930"
+                  Background="{DynamicResource Background}"
+                  Foreground="{DynamicResource Foreground}"
+                  BorderColor="{Binding StatusBarColor}"
+                  ResizeMode="CanResizeWithGrip">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Info">
+                <views:StarzShowInfoView />
+            </TabItem>
+            <TabItem Header="Schedule">
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</local:FlatWindow>

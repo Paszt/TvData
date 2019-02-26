@@ -10,7 +10,6 @@
 
     Private Shared Function ShowDialogInternal(messageWindowText As String, caption As String, Optional ShowCancel As Boolean = False) As Boolean?
         Dim mw As New MessageWindow() With {
-            .Owner = Application.Current.MainWindow,
             .WindowStartupLocation = WindowStartupLocation.CenterOwner,
             .MinHeight = 200,
             .MinWidth = 450,
@@ -20,6 +19,10 @@
             .ShowInTaskbar = False,
             .Title = caption
         }
+        mw.Owner = Application.Current.Windows.OfType(Of Window)().FirstOrDefault(Function(w) w.IsActive)
+        'If Application.Current.MainWindow IsNot Nothing Then
+        '    mw.Owner = Application.Current.MainWindow
+        'End If
         mw.MessageTextBlock.Text = messageWindowText
         If ShowCancel Then
             mw.CancelButton.Visibility = Visibility.Visible

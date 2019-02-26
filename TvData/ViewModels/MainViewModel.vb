@@ -2589,6 +2589,24 @@ Public Class MainViewModel
         End Get
     End Property
 
+    Public ReadOnly Property OpenStarzWindowCommand As ICommand
+        Get
+            Return New RelayCommand(Sub()
+                                        Dim szWindow As New StarzWindow
+                                        AddHandler szWindow.Closing,
+                                            Sub()
+                                                My.Settings.StarzWindowPlacement = szWindow.GetPlacement
+                                                My.Settings.Save()
+                                            End Sub
+                                        AddHandler szWindow.SourceInitialized,
+                                            Sub()
+                                                szWindow.SetPlacement(My.Settings.StarzWindowPlacement)
+                                            End Sub
+                                        szWindow.Show()
+                                    End Sub)
+        End Get
+    End Property
+
     Public ReadOnly Property ConvertDateTitleCommand() As ICommand
         Get
             Return New RelayCommand(Sub()

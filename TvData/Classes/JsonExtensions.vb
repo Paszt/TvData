@@ -56,6 +56,20 @@ Namespace Extensions
             End Try
         End Function
 
+        ''' <summary>
+        ''' Creates a JSON Array based on a list
+        ''' </summary>
+        ''' <typeparam name="T"></typeparam>
+        ''' <param name="list"></param>
+        ''' <returns></returns>
+        <System.Runtime.CompilerServices.Extension>
+        Public Function ToJSONArray(Of T)(ByVal list As IEnumerable(Of T)) As String
+            Dim s As DataContractJsonSerializer = New DataContractJsonSerializer(GetType(IEnumerable(Of T)))
+            Dim ms As MemoryStream = New MemoryStream()
+            s.WriteObject(ms, list)
+            Return Encoding.UTF8.GetString(ms.ToArray())
+        End Function
+
     End Module
 
 End Namespace

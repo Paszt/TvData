@@ -17,7 +17,7 @@
                   BorderColor="{Binding StatusBarColor}"
                   ResizeMode="CanResizeWithGrip"
                   Title="{Binding WindowTitle}"
-                  AllowDrop="True" 
+                  AllowDrop="True"
                   local:FileDragDropHandler.IsEnabled="True"
                   local:FileDragDropHandler.Target="{Binding}">
     <i:Interaction.Behaviors>
@@ -298,6 +298,12 @@
                         ToolTip="Open SundanceTV Window">
                     <Image Source="{DynamicResource SundanceTvDrawingImage}"
                            Width="20"
+                           Height="20" />
+                </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        Command="{Binding OpenStarzWindowCommand}"
+                        ToolTip="Open Starz Window">
+                    <Image Source="{DynamicResource StarzDrawingImage}"
                            Height="20" />
                 </Button>
             </StackPanel>
