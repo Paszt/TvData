@@ -153,6 +153,10 @@ Public Class StarzShowInfoViewModel
                         si.Title = dictEntry.Value.Title.Value
                         si.NumberOfEpisodes = dictEntry.Value.ChildContent.Length.Value
                     Next
+
+                    If SeasonInfos.Count > 0 Then
+                        SelectedSeason = SeasonInfos.Last()
+                    End If
                 End Sub)
         End Get
     End Property
@@ -214,6 +218,7 @@ Public Class StarzShowInfoViewModel
 
     Private Sub GetShowList()
         ShowList = New ObservableCollection(Of ShowTitleId)(My.Settings.StarzShows.FromJSONArray(Of ShowTitleId))
+        SelectedShow = ShowList.FirstOrDefault()
     End Sub
 
     Private Sub SaveShowList()

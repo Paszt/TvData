@@ -2592,17 +2592,7 @@ Public Class MainViewModel
     Public ReadOnly Property OpenStarzWindowCommand As ICommand
         Get
             Return New RelayCommand(Sub()
-                                        Dim szWindow As New StarzWindow
-                                        AddHandler szWindow.Closing,
-                                            Sub()
-                                                My.Settings.StarzWindowPlacement = szWindow.GetPlacement
-                                                My.Settings.Save()
-                                            End Sub
-                                        AddHandler szWindow.SourceInitialized,
-                                            Sub()
-                                                szWindow.SetPlacement(My.Settings.StarzWindowPlacement)
-                                            End Sub
-                                        szWindow.Show()
+                                        My.Application.OpenStarzWindow()
                                     End Sub)
         End Get
     End Property
