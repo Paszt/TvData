@@ -12,7 +12,7 @@
                   Background="{DynamicResource Background}"
                   Foreground="{DynamicResource Foreground}"
                   BorderColor="{Binding StatusBarColor}"
-                  ResizeMode="CanResizeWithGrip">
+                  ResizeMode="CanResizeWithGrip" Icon="C:\Users\Stephen\source\repos\TvData\TvData\Resources\starz-favicon.ico">
     <Grid>
         <TabControl>
             <TabItem Header="Info">

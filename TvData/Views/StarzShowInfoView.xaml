@@ -31,7 +31,7 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Show:" />
                 <ComboBox Width="240"
-                          ItemsSource="{Binding ShowList}"
+                          ItemsSource="{Binding ShowListView}"
                           SelectedItem="{Binding SelectedShow}"
                           DisplayMemberPath="Title"
                           SelectedValuePath="Id" />

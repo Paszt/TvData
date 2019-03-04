@@ -10,12 +10,23 @@ Public Class StarzShowInfoViewModel
     Inherits ViewModelBase
 
     Public Sub New()
-        '''DEBUG
-        'SaveShowList()
-        '''END DEBUG
         GetShowList()
+        ShowListView = New ListCollectionView(_showList) With {
+            .Filter = New Predicate(Of Object)(
+            Function(stid As Object)
+                Dim shwTitlId As ShowTitleId = CType(stid, ShowTitleId)
+                Return shwTitlId.Id.HasValue = True
+            End Function)
+        }
+        ShowListView.SortDescriptions.Add(New ComponentModel.SortDescription("Title", ComponentModel.ListSortDirection.Ascending))
+
+        ShowListManageView = New ListCollectionView(_showList)
+        ShowListManageView.SortDescriptions.Add(New ComponentModel.SortDescription("Title", ComponentModel.ListSortDirection.Ascending))
+
         SeasonInfos = New ObservableCollection(Of StarzSeasonInformation)
     End Sub
+
+    Private _showList As ObservableCollection(Of ShowTitleId)
 
 #Region " Properties "
 
@@ -29,15 +40,9 @@ Public Class StarzShowInfoViewModel
         End Set
     End Property
 
-    Private _showList As ObservableCollection(Of ShowTitleId)
-    Public Property ShowList As ObservableCollection(Of ShowTitleId)
-        Get
-            Return _showList
-        End Get
-        Set(value As ObservableCollection(Of ShowTitleId))
-            SetProperty(_showList, value)
-        End Set
-    End Property
+    Public Property ShowListView As ListCollectionView
+
+    Public Property ShowListManageView As ListCollectionView
 
     Private _selectedShow As ShowTitleId
     Public Property SelectedShow As ShowTitleId
@@ -104,12 +109,19 @@ Public Class StarzShowInfoViewModel
         Get
             Return New RelayCommand(
                 Sub()
-                    Dim showId = GetShowId(ShowTitleToAdd)
-                    If showId <> Nothing Then
-                        Dim newShow = New ShowTitleId() With {.Id = showId, .Title = ShowTitleToAdd}
-                        ShowList.Add(newShow)
-                        SaveShowList()
-                        ShowTitleToAdd = String.Empty
+                    Dim result = GetShowId(ShowTitleToAdd)
+                    If Not result.Id.HasValue Then
+                        If MessageWindow.ShowDialog("Unable to get ID. " & result.Message & Environment.NewLine &
+                                                    "Click OK to add it to the list to check later.",
+                                                    "Show ID Not Found", True) = False Then
+                            Exit Sub
+                        End If
+                    End If
+                    Dim newShow = New ShowTitleId() With {.Id = result.Id, .Title = ShowTitleToAdd}
+                    _showList.Add(newShow)
+                    SaveShowList()
+                    ShowTitleToAdd = String.Empty
+                    If result.Id.HasValue Then
                         SelectedShow = newShow
                     End If
                 End Sub)
@@ -197,18 +209,39 @@ Public Class StarzShowInfoViewModel
                             Episodes.Add(ep)
                         End If
                     Next
-
                     ''Episodes = CType(contentById, JObject).PropertyValues.Select(Function(o) o.ToObject(Of StarzEpisodeInfo)).ToList()
+                End Sub,
+                Function() As Boolean
+                    Return SelectedSeason IsNot Nothing
+                End Function)
+        End Get
+    End Property
+
+    Public ReadOnly Property UpdateShowTitleIdCommand As ICommand
+        Get
+            Return New RelayCommand(Of ShowTitleId)(
+                Sub(show As ShowTitleId)
+                    Dim result = GetShowId(show.Title)
+                    If Not result.Id.HasValue Then
+                        MessageWindow.ShowDialog("Unable to get ID. " & result.Message, "Show ID Not Found")
+                        Exit Sub
+                    End If
+                    show.Id = result.Id
+                    SaveShowList()
+                    If result.Id.HasValue Then
+                        SelectedShow = show
+                    End If
                 End Sub)
         End Get
     End Property
 
     Public ReadOnly Property RemoveShowTitleIdCommand As ICommand
         Get
-            Return New RelayCommand(Of ShowTitleId)(Sub(show As ShowTitleId)
-                                                        ShowList.Remove(show)
-                                                        SaveShowList()
-                                                    End Sub)
+            Return New RelayCommand(Of ShowTitleId)(
+                Sub(show As ShowTitleId)
+                    _showList.Remove(show)
+                    SaveShowList()
+                End Sub)
         End Get
     End Property
 
@@ -217,41 +250,48 @@ Public Class StarzShowInfoViewModel
 #Region " Private Methods "
 
     Private Sub GetShowList()
-        ShowList = New ObservableCollection(Of ShowTitleId)(My.Settings.StarzShows.FromJSONArray(Of ShowTitleId))
-        SelectedShow = ShowList.FirstOrDefault()
+        _showList = New ObservableCollection(Of ShowTitleId)(My.Settings.StarzShows.FromJSONArray(Of ShowTitleId).OrderBy(Function(st) st.Title))
+        SelectedShow = _showList.FirstOrDefault()
     End Sub
 
     Private Sub SaveShowList()
-        My.Settings.StarzShows = ShowList.ToJSONArray()
+        My.Settings.StarzShows = _showList.ToJSONArray()
         My.Settings.Save()
     End Sub
 
-    Private Function GetShowId(showName As String) As Integer
-        Dim EpisodeListUrl = "https://www.starz.com/series/" & showName.ToVanitySlug() & "/episodes"
+    Private Function GetShowId(showTitle As String) As GetShowIdResult
+        Dim returnValue As New GetShowIdResult()
+        Dim EpisodeListUrl = "https://www.starz.com/series/" & showTitle.ToVanitySlug() & "/episodes"
         Dim html = String.Empty
         Try
             html = WebResources.DownloadString(EpisodeListUrl)
         Catch ex As Exception
-            MessageWindow.ShowDialog(ex.Message, "Error Getting Show Id")
-            Return Nothing
+            returnValue.Message = ex.Message
+            'MessageWindow.ShowDialog(ex.Message, "Error Getting Show Id")
+            'Return Nothing
         End Try
 
-        Dim doc = CsQuery.CQ.CreateDocument(html)
-        Dim canonicalLink = doc.Find("link[rel=canonical]").Attr("href")
-        Dim showIdMatch = Regex.Match(canonicalLink, "\/series\/(\d+)\/", RegexOptions.IgnoreCase)
-        If showIdMatch.Success Then
-            Return CInt(showIdMatch.Groups(1).Value)
-        Else
-            MessageWindow.ShowDialog("Unable to find show id while scraping Starz website.", "Unable to find show Id")
-            Return Nothing
+        If Not String.IsNullOrEmpty(html) Then
+            Dim doc = CsQuery.CQ.CreateDocument(html)
+            Dim canonicalLink = doc.Find("link[rel=canonical]").Attr("href")
+            Dim showIdMatch = Regex.Match(canonicalLink, "\/series\/(\d+)\/", RegexOptions.IgnoreCase)
+            If showIdMatch.Success Then
+                returnValue.Id = CInt(showIdMatch.Groups(1).Value)
+                'Return CInt(showIdMatch.Groups(1).Value)
+            Else
+                returnValue.Message = "Could not find ID in the HTML on the Starz website."
+                'MessageWindow.ShowDialog("Unable to find show id while scraping Starz website.", "Unable to find show Id")
+                'Return Nothing
+            End If
         End If
+        Return returnValue
     End Function
 
     Private Sub OnSelectedSeasonChanged()
-        If Episodes IsNot Nothing Then
-            Episodes.Clear()
-        End If
-    End Sub
+            If Episodes IsNot Nothing Then
+                Episodes.Clear()
+            End If
+        End Sub
 
 #End Region
 
@@ -259,185 +299,185 @@ Public Class StarzShowInfoViewModel
 
 #Region " Seasons "
 
-    <DataContract>
-    Public Class StarzSeasonInfos
-        <JsonProperty("contentById")>
-        Public Property ContentById As Dictionary(Of String, SeasonInfo)
-    End Class
+        <DataContract>
+        Public Class StarzSeasonInfos
+            <JsonProperty("contentById")>
+            Public Property ContentById As Dictionary(Of String, SeasonInfo)
+        End Class
 
-    <DataContract>
-    Public Class SeasonInfo
-        <JsonProperty("childContent")>
-        Public Property ChildContent As ChildContentLength
+        <DataContract>
+        Public Class SeasonInfo
+            <JsonProperty("childContent")>
+            Public Property ChildContent As ChildContentLength
 
-        <JsonProperty("title")>
-        Public Property Title As AtomString
-    End Class
+            <JsonProperty("title")>
+            Public Property Title As AtomString
+        End Class
 
-    <DataContract>
-    Public Class ChildContentLength
-        <JsonProperty("length")>
-        Public Property Length As AtomInteger
-    End Class
+        <DataContract>
+        Public Class ChildContentLength
+            <JsonProperty("length")>
+            Public Property Length As AtomInteger
+        End Class
 
 #End Region
 
 #Region " Episodes "
 
-    <DataContract>
-    Public Class StarzEpisodeInfo
+        <DataContract>
+        Public Class StarzEpisodeInfo
 
-        <JsonProperty("contentId")>
-        Public Property ContentId As AtomInteger
+            <JsonProperty("contentId")>
+            Public Property ContentId As AtomInteger
 
-        <JsonProperty("contentType")>
-        Public Property ContentType As AtomString
+            <JsonProperty("contentType")>
+            Public Property ContentType As AtomString
 
-        <JsonProperty("logLine")>
-        Public Property LogLine As AtomString
+            <JsonProperty("logLine")>
+            Public Property LogLine As AtomString
 
-        <JsonProperty("order")>
-        Public Property Order As AtomInteger
+            <JsonProperty("order")>
+            Public Property Order As AtomInteger
 
-        <JsonProperty("properCaseTitle")>
-        Public Property ProperCaseTitle As AtomString ' "Ep 201 - Inside Out"
+            <JsonProperty("properCaseTitle")>
+            Public Property ProperCaseTitle As AtomString ' "Ep 201 - Inside Out"
 
-        <JsonProperty("releaseYear")>
-        Public Property ReleaseYear As AtomString
+            <JsonProperty("releaseYear")>
+            Public Property ReleaseYear As AtomString
 
-        <JsonProperty("startDate")>
-        Public Property StartDate As AtomString
+            <JsonProperty("startDate")>
+            Public Property StartDate As AtomString
 
-        <JsonProperty("title")>
-        Public Property Title As AtomString ' "Counterpart: Ep 201 - Inside Out"
+            <JsonProperty("title")>
+            Public Property Title As AtomString ' "Counterpart: Ep 201 - Inside Out"
 
-        <JsonProperty("images")>
-        Public Property Images As AtomImages
+            <JsonProperty("images")>
+            Public Property Images As AtomImages
 
-        Private ReadOnly titleRegex As Regex = New Regex("Ep (?<season>\d+)(?<episode>\d{2}) - (?<title>.+)")
+            Private ReadOnly titleRegex As Regex = New Regex("Ep (?<season>\d+)(?<episode>\d{2}) - (?<title>.+)")
 
-        <JsonIgnore>
-        Public ReadOnly Property Number As Integer
-            Get
-                If ProperCaseTitle Is Nothing Then Return Nothing
-                Dim titleMatch = titleRegex.Match(ProperCaseTitle.Value)
-                If titleMatch.Success Then
-                    Return CInt(titleMatch.Groups("episode").Value)
-                End If
-                Return -1
-            End Get
-        End Property
+            <JsonIgnore>
+            Public ReadOnly Property Number As Integer
+                Get
+                    If ProperCaseTitle Is Nothing Then Return Nothing
+                    Dim titleMatch = titleRegex.Match(ProperCaseTitle.Value)
+                    If titleMatch.Success Then
+                        Return CInt(titleMatch.Groups("episode").Value)
+                    End If
+                    Return -1
+                End Get
+            End Property
 
-        <JsonIgnore>
-        Public ReadOnly Property SeasonNumber As Integer
-            Get
-                If ProperCaseTitle Is Nothing Then Return Nothing
-                Dim titleMatch = titleRegex.Match(ProperCaseTitle.Value)
-                If titleMatch.Success Then
-                    Return CInt(titleMatch.Groups("season").Value)
-                End If
-                Return -1
-            End Get
-        End Property
+            <JsonIgnore>
+            Public ReadOnly Property SeasonNumber As Integer
+                Get
+                    If ProperCaseTitle Is Nothing Then Return Nothing
+                    Dim titleMatch = titleRegex.Match(ProperCaseTitle.Value)
+                    If titleMatch.Success Then
+                        Return CInt(titleMatch.Groups("season").Value)
+                    End If
+                    Return -1
+                End Get
+            End Property
 
-        <JsonIgnore>
-        Public ReadOnly Property EpisodeTitle As String
-            Get
-                If ProperCaseTitle Is Nothing Then Return Nothing
-                Dim titleMatch = titleRegex.Match(ProperCaseTitle.Value)
-                If titleMatch.Success Then
-                    Return titleMatch.Groups("title").Value
-                End If
-                Return String.Empty
-            End Get
-        End Property
+            <JsonIgnore>
+            Public ReadOnly Property EpisodeTitle As String
+                Get
+                    If ProperCaseTitle Is Nothing Then Return Nothing
+                    Dim titleMatch = titleRegex.Match(ProperCaseTitle.Value)
+                    If titleMatch.Success Then
+                        Return titleMatch.Groups("title").Value
+                    End If
+                    Return String.Empty
+                End Get
+            End Property
 
-        Private _firstAired As String = Nothing
-        <JsonIgnore>
-        Public ReadOnly Property FirstAired As String
-            Get
-                If String.IsNullOrEmpty(_firstAired) Then
-                    If StartDate Is Nothing Then Return Nothing
-                    If String.IsNullOrEmpty(StartDate.Value) Then
-                        Dim json = WebResources.DownloadString("https://www.starz.com/api/schedule/search/" & ContentId.Value)
-                        Dim scheduleItem = JsonConvert.DeserializeObject(Of StarzScheduleItem)(json)
-                        Dim dte As Date
-                        If Date.TryParse(scheduleItem.Start, dte) Then
-                            _firstAired = dte.ToIso8601DateString
+            Private _firstAired As String = Nothing
+            <JsonIgnore>
+            Public ReadOnly Property FirstAired As String
+                Get
+                    If String.IsNullOrEmpty(_firstAired) Then
+                        If StartDate Is Nothing Then Return Nothing
+                        If String.IsNullOrEmpty(StartDate.Value) Then
+                            Dim json = WebResources.DownloadString("https://www.starz.com/api/schedule/search/" & ContentId.Value)
+                            Dim scheduleItem = JsonConvert.DeserializeObject(Of StarzScheduleItem)(json)
+                            Dim dte As Date
+                            If Date.TryParse(scheduleItem.Start, dte) Then
+                                _firstAired = dte.ToIso8601DateString
+                            Else
+                                _firstAired = scheduleItem.Start
+                            End If
                         Else
-                            _firstAired = scheduleItem.Start
-                        End If
-                    Else
-                        Dim dte As Date
-                        If Date.TryParse(StartDate.Value, dte) Then
-                            _firstAired = dte.ToIso8601DateString()
-                        Else
-                            _firstAired = StartDate.Value
+                            Dim dte As Date
+                            If Date.TryParse(StartDate.Value, dte) Then
+                                _firstAired = dte.ToIso8601DateString()
+                            Else
+                                _firstAired = StartDate.Value
+                            End If
                         End If
                     End If
-                End If
-                Return _firstAired
-            End Get
-        End Property
+                    Return _firstAired
+                End Get
+            End Property
 
-    End Class
+        End Class
 
-    <DataContract>
-    Public Class AtomImages
+        <DataContract>
+        Public Class AtomImages
 
-        <JsonProperty("value")>
-        Public Property Value As StarzImages
+            <JsonProperty("value")>
+            Public Property Value As StarzImages
 
-    End Class
+        End Class
 
-    <DataContract>
-    Public Class StarzImages
+        <DataContract>
+        Public Class StarzImages
 
-        Private _landscapeBg As String
+            Private _landscapeBg As String
 
-        <JsonProperty("landscapeBg")>
-        Public Property LandscapeBg As String
-            Get
-                Return _landscapeBg
-            End Get
-            Set(value As String)
-                _landscapeBg = value.Replace("https", "http")
-            End Set
-        End Property
+            <JsonProperty("landscapeBg")>
+            Public Property LandscapeBg As String
+                Get
+                    Return _landscapeBg
+                End Get
+                Set(value As String)
+                    _landscapeBg = value.Replace("https", "http")
+                End Set
+            End Property
 
-    End Class
+        End Class
 
 #End Region
 
-    <DataContract>
-    Public Class AtomInteger
-        <JsonProperty("value")>
-        Public Property Value As Integer
-    End Class
+        <DataContract>
+        Public Class AtomInteger
+            <JsonProperty("value")>
+            Public Property Value As Integer
+        End Class
 
-    <DataContract>
-    Public Class AtomString
-        <JsonProperty("value")>
-        Public Property Value As String
-    End Class
+        <DataContract>
+        Public Class AtomString
+            <JsonProperty("value")>
+            Public Property Value As String
+        End Class
 
-    <DataContract>
-    Public Class StarzScheduleItem
+        <DataContract>
+        Public Class StarzScheduleItem
 
-        <JsonProperty("start")>
-        Public Property Start As String
+            <JsonProperty("start")>
+            Public Property Start As String
 
-        <JsonProperty("end")>
-        Public Property [End] As String
+            <JsonProperty("end")>
+            Public Property [End] As String
 
-    End Class
+        End Class
 
 #End Region
 
     Public Class ShowTitleId
 
         Public Property Title As String
-        Public Property Id As Integer
+        Public Property Id As Integer?
 
     End Class
 
@@ -454,6 +494,11 @@ Public Class StarzShowInfoViewModel
             End Get
         End Property
 
+    End Class
+
+    Public Class GetShowIdResult
+        Public Property Id As Integer?
+        Public Property Message As String
     End Class
 
 End Class
