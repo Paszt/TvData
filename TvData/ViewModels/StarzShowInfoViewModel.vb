@@ -132,6 +132,9 @@ Public Class StarzShowInfoViewModel
         Get
             Return New RelayCommand(
                 Sub()
+                    If SeasonInfos IsNot Nothing Then
+                        SeasonInfos.Clear()
+                    End If
                     'get number of seasons
                     Dim json = WebResources.DownloadString("https://www.starz.com/api/model.json?paths=[[""contentById""," & SelectedShow.Id &
                                                            ",""childContent"",""length""]]&method=get")
