@@ -28,8 +28,11 @@ Module HelperExtensions
 
     <Extension>
     Public Function RemoveAccent(txt As String) As String
-        Dim bytes As Byte() = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt)
-        Return Text.Encoding.ASCII.GetString(bytes)
+        If txt IsNot Nothing Then
+            Dim bytes As Byte() = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt)
+            Return Text.Encoding.ASCII.GetString(bytes)
+        End If
+        Return Nothing
     End Function
 
     ''' <summary>
@@ -38,6 +41,9 @@ Module HelperExtensions
     ''' <param name="phrase">The string to convert</param>
     <Extension>
     Public Function ToVanitySlug(phrase As String) As String
+        If phrase Is Nothing Then
+            Return Nothing
+        End If
         Dim str As String = phrase.RemoveAccent().ToLower()
         ' invalid chars           
         str = Regex.Replace(str, "[^a-z0-9\s-]", String.Empty)

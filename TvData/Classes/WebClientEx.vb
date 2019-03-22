@@ -9,7 +9,6 @@ Public Class WebClientEx
     Public Sub New()
         MyBase.New()
         Encoding = Text.Encoding.UTF8
-        System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
     End Sub
 
     Private _cookieContainer As New CookieContainer

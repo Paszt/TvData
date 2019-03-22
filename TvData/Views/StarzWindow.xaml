@@ -9,10 +9,12 @@
                   Title="Starz"
                   Height="500"
                   Width="930"
+                  MinWidth="860"
                   Background="{DynamicResource Background}"
                   Foreground="{DynamicResource Foreground}"
                   BorderColor="{Binding StatusBarColor}"
-                  ResizeMode="CanResizeWithGrip" Icon="C:\Users\Stephen\source\repos\TvData\TvData\Resources\starz-favicon.ico">
+                  ResizeMode="CanResizeWithGrip"
+                  Icon="C:\Users\Stephen\source\repos\TvData\TvData\Resources\starz-favicon.ico">
     <Grid>
         <TabControl>
             <TabItem Header="Info">

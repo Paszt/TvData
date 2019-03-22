@@ -108,7 +108,6 @@ Public Class VicelandViewModel
         ScheduleEntriesInner = New ObservableCollection(Of VicelandScheduleEntry)
         Do
             Dim json = String.Empty
-            Net.ServicePointManager.SecurityProtocol = Net.SecurityProtocolType.Tls12
             Using wcx As New WebClientEx
                 Try
                     json = wcx.DownloadString(GetJsonUrl(dte))

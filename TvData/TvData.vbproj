@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>TvData</RootNamespace>
     <AssemblyName>TvData</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <MyType>Custom</MyType>
     <TargetFrameworkProfile />
   </PropertyGroup>

@@ -2779,17 +2779,19 @@ Public Class MainViewModel
                                     Application.Current.Dispatcher.BeginInvoke(New TVSeries.AddEpisodeDelegate(AddressOf TVSeries.AddEpisode), New Object() {Data.Episodes, ep})
                                 Next
                             Case NewEpisodesWindow.EpisodeGenerationMethod.SpecificType
+                                Dim seasonNo As Short = CShort(If(newEpWindow.SeasonNumberSpecific <> Nothing, newEpWindow.SeasonNumberSpecific, newEpWindow.YearSpecific))
+                                Dim days As IEnumerable(Of Date)
                                 Select Case newEpWindow.SelectedEpisodeGenerationSubMethod
                                     Case NewEpisodesWindow.EpisodeGenerationSubMethod.Everyday
-
+                                        MessageWindow.ShowDialog("Everyday generation not yet implemented", "Not Yet Implemented")
                                     Case NewEpisodesWindow.EpisodeGenerationSubMethod.Fridays
-
+                                        MessageWindow.ShowDialog("Fridays generation not yet implemented", "Not Yet Implemented")
                                     Case NewEpisodesWindow.EpisodeGenerationSubMethod.Weekdays
-
-
+                                        days = GetWeekDayDays(newEpWindow.YearSpecific)
+                                        AddEpisodes(days, seasonNo)
                                     Case NewEpisodesWindow.EpisodeGenerationSubMethod.Weekends
-
-
+                                        days = GetWeekendDays(newEpWindow.YearSpecific)
+                                        AddEpisodes(days, seasonNo)
                                 End Select
                         End Select
                     End If
@@ -2797,6 +2799,20 @@ Public Class MainViewModel
                 End Sub)
         End Get
     End Property
+
+    Private Sub AddEpisodes(days As IEnumerable(Of Date), seasonNumber As Short)
+        Dim episodeCounter As Integer = 1
+        For Each dy In days
+            Dim ep As New Episode() With {
+                .EpisodeNumber = CShort(episodeCounter),
+                .SeasonNumber = seasonNumber,
+                .FirstAired = dy.ToIso8601DateString,
+                .EpisodeName = dy.ToString("MMMM d, yyyy")
+            }
+            Application.Current.Dispatcher.BeginInvoke(New TVSeries.AddEpisodeDelegate(AddressOf TVSeries.AddEpisode), New Object() {Data.Episodes, ep})
+            episodeCounter += 1
+        Next
+    End Sub
 
     Private Function GetNextWeekdayDate(ByRef dte As Date) As Date
         Do

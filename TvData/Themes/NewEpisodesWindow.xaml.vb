@@ -96,9 +96,18 @@ Public Class NewEpisodesWindow
 
 #Region " Specific Days "
 
+    Public ReadOnly Property YearSpecific As Integer
+        Get
+            Return CInt(YearSpecificTextBox.Text)
+        End Get
+    End Property
+
     Public ReadOnly Property SeasonNumberSpecific As Integer
         Get
-            Return CInt(SeasonSpecificTextBox.Text)
+            If Not String.IsNullOrEmpty(SeasonSpecificTextBox.Text) Then
+                Return CInt(SeasonSpecificTextBox.Text)
+            End If
+            Return Nothing
         End Get
     End Property
 

@@ -509,6 +509,13 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
+    <DrawingImage x:Key="OpenInBrowserDrawingImage">
+        <DrawingImage.Drawing>
+            <GeometryDrawing Brush="#FFC1C1C1"
+                             Geometry="F1 M 16,2647.67L 10.6667,2653L 14.6667,2653L 14.6667,2661L 17.3333,2661L 17.3333,2653L 21.3333,2653M 25.3333,2639.67L 6.66667,2639.67C 5.18667,2639.67 4,2640.87 4,2642.33L 4,2658.33C 4,2659.8 5.18667,2661 6.66667,2661L 12,2661L 12,2658.33L 6.66667,2658.33L 6.66667,2645L 25.3333,2645L 25.3333,2658.33L 20,2658.33L 20,2661L 25.3333,2661C 26.8,2661 28,2659.8 28,2658.33L 28,2642.33C 28,2640.87 26.8133,2639.67 25.3333,2639.67 Z " />
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
     <DrawingImage x:Key="PlusDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup>

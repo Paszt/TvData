@@ -7,7 +7,7 @@
              xmlns:views="clr-namespace:TvData.Views"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800"
+             d:DesignWidth="1000"
              Foreground="{StaticResource Foreground}"
              FontFamily="Museo Sans 500">
     <UserControl.DataContext>
@@ -28,7 +28,8 @@
                 <RowDefinition Height="32" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
                 <TextBlock Text="Show:" />
                 <ComboBox Width="240"
                           ItemsSource="{Binding ShowListView}"
@@ -36,23 +37,27 @@
                           DisplayMemberPath="Title"
                           SelectedValuePath="Id" />
                 <Button Command="{Binding DownloadSeasonInfoCommand}"
-                        Height="32"
                         ToolTip="Load Seasons"
                         Margin="5,0">
                     <Image Source="{DynamicResource DownloadDrawingImage}" />
                 </Button>
-                <ComboBox MinWidth="200"
+                <ComboBox MinWidth="260"
                           ItemsSource="{Binding SeasonInfos}"
                           SelectedItem="{Binding SelectedSeason}"
                           DisplayMemberPath="DisplayTitle"
                           SelectedValuePath="Id"
-                          Margin="10,0,0,0" />
+                          Margin="15,0,0,0" />
                 <Button Command="{Binding DownloadSeasonEpisodesCommand}"
-                        Height="32"
                         ToolTip="Load Episodes"
-                        Margin="5,0,15,0">
+                        Margin="5,0,5,0">
                     <Image Source="{DynamicResource DownloadDrawingImage}" />
                 </Button>
+                <Button Command="{Binding ViewSeasonJsonCommand}"
+                        ToolTip="View JSON in browser">
+                    <Image Source="{DynamicResource OpenInBrowserDrawingImage}" />
+                </Button>
+
+                <Separator Margin="20,0" />
 
                 <Button Command="{Binding ShowManageShowsCommand}"
                         Height="32"
@@ -122,10 +127,16 @@
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
             </ListBox>
         </Grid>
 
         <!--Manage Shows-->
+        <!-- Visibility="{Binding ManageShowsVisibility}" -->
         <views:StarzManageShowsView Visibility="{Binding ManageShowsVisibility}" />
 
     </Grid>
