@@ -8,14 +8,18 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              Foreground="{StaticResource Foreground}"
-             Background="{StaticResource Background}"
+             Background="#CC1C1C1C"
              FontFamily="Museo 500">
+    <UserControl.Resources>
+        <local:ShowTitleIdSampleData x:Key="ShowTitleIdSampleData" />
+    </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Command="{Binding HideManageShowsCommand}"
                     Key="Esc" />
     </UserControl.InputBindings>
-    <Grid Background="{StaticResource BackgroundDark}">
+    <Grid Background="Transparent">
         <Border BorderBrush="{StaticResource AccentColorBrush}"
+                Background="{StaticResource BackgroundDark}"
                 BorderThickness="2"
                 MaxWidth="560"
                 Margin="0,30">
@@ -53,7 +57,8 @@
                     <ListBox Grid.Row="1"
                              Margin="0,10,0,0"
                              ItemsSource="{Binding ShowListManageView}"
-                             Grid.IsSharedSizeScope="True">
+                             Grid.IsSharedSizeScope="True"
+                             d:DataContext="{StaticResource ShowTitleIdSampleData}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -72,23 +77,30 @@
                                                Width="14"
                                                Margin="2" />
                                     </Button>
-                                    <TextBlock Text="{Binding Title}"
-                                               FontSize="18"
-                                               Grid.Column="1">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground"
-                                                        Value="#FFDBC39B" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Id}"
-                                                                 Value="{x:Null}">
-                                                        <Setter Property="TextBlock.Foreground"
-                                                                Value="#FFB5B5B5" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
+                                    <!--Show Title-->
+                                    <TextBlock Grid.Column="1">
+                                        <Hyperlink Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=DataContext.ViewShowWebpageCommand}"
+                                                   CommandParameter="{Binding}" TextDecorations="">
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="18">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground"
+                                                                Value="#FFDBC39B" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Id}"
+                                                                         Value="{x:Null}">
+                                                                <Setter Property="TextBlock.Foreground"
+                                                                        Value="#FFB5B5B5" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Hyperlink>
                                     </TextBlock>
+
+
                                     <Button Margin="5,0"
                                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.UpdateShowTitleIdCommand}"
                                             CommandParameter="{Binding}"

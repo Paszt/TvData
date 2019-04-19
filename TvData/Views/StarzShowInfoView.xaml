@@ -20,6 +20,7 @@
             <Setter Property="Margin"
                     Value="0,0,5,0" />
         </Style>
+        <local:StarzEpisodesSampleData x:Key="StarzEpisodesSampleData" />
     </UserControl.Resources>
     <Grid Margin="20">
         <!--Main Display-->
@@ -59,7 +60,7 @@
 
                 <Separator Margin="20,0" />
 
-                <Button Command="{Binding ShowManageShowsCommand}"
+                <Button Command="{Binding DisplayManageShowsCommand}"
                         Height="32"
                         ToolTip="Manage Shows"
                         Width="45">
@@ -70,7 +71,9 @@
 
             <ListBox Grid.Row="1"
                      Margin="0,20,0,0"
-                     ItemsSource="{Binding Episodes}">
+                     ItemsSource="{Binding EpisodesCollectionView}"
+                     d:DataContext="{StaticResource StarzEpisodesSampleData}"
+                     ScrollViewer.CanContentScroll="False">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <!--<DataTemplate.Resources>
@@ -106,10 +109,16 @@
                             <!--episodeName-->
                             <TextBlock Grid.Column="2"
                                        Margin="10,0"
-                                       Text="{Binding EpisodeTitle}"
                                        MaxWidth="300"
-                                       TextTrimming="CharacterEllipsis"
-                                       HorizontalAlignment="Left" />
+                                       HorizontalAlignment="Left">
+                                <Hyperlink Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=DataContext.ViewEpisodeWebpageCommand}"
+                                           CommandParameter="{Binding}">
+                                    <TextBlock Text="{Binding EpisodeTitle}"
+                                               TextTrimming="CharacterEllipsis"
+                                               HorizontalAlignment="Left"
+                                               ToolTip="View on Starz.com" />
+                                </Hyperlink>
+                            </TextBlock>
                             <!--airDate-->
                             <TextBlock Grid.Column="3"
                                        Margin="10,0"
@@ -132,6 +141,12 @@
                         <StackPanel HorizontalAlignment="Center" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="MaxHeight"
+                                Value="100" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
 

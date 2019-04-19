@@ -1,4 +1,5 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.ComponentModel
 Imports System.Runtime.Serialization
 Imports System.Text.RegularExpressions
 Imports Newtonsoft.Json
@@ -18,15 +19,20 @@ Public Class StarzShowInfoViewModel
                 Return shwTitlId.Id.HasValue = True
             End Function)
         }
-        ShowListView.SortDescriptions.Add(New ComponentModel.SortDescription("Title", ComponentModel.ListSortDirection.Ascending))
+        ShowListView.SortDescriptions.Add(New SortDescription("Title", ListSortDirection.Ascending))
 
         ShowListManageView = New ListCollectionView(_showList)
-        ShowListManageView.SortDescriptions.Add(New ComponentModel.SortDescription("Title", ComponentModel.ListSortDirection.Ascending))
+        ShowListManageView.SortDescriptions.Add(New SortDescription("Title", ListSortDirection.Ascending))
 
         SeasonInfos = New ObservableCollection(Of StarzSeasonInformation)
+
+        _episodes = New ObservableCollection(Of StarzEpisodeInfo)
+        EpisodesCollectionView = New ListCollectionView(_episodes)
+        EpisodesCollectionView.SortDescriptions.Add(New SortDescription("Number", ListSortDirection.Ascending))
     End Sub
 
     Private _showList As ObservableCollection(Of ShowTitleId)
+    Private _episodes As ObservableCollection(Of StarzEpisodeInfo)
 
 #Region " Properties "
 
@@ -43,6 +49,8 @@ Public Class StarzShowInfoViewModel
     Public Property ShowListView As ListCollectionView
 
     Public Property ShowListManageView As ListCollectionView
+
+    Public Property EpisodesCollectionView As ListCollectionView
 
     Private _selectedShow As ShowTitleId
     Public Property SelectedShow As ShowTitleId
@@ -78,16 +86,6 @@ Public Class StarzShowInfoViewModel
             If SetProperty(_selectedSeason, value) Then
                 OnSelectedSeasonChanged()
             End If
-        End Set
-    End Property
-
-    Private _episodes As ObservableCollection(Of StarzEpisodeInfo)
-    Public Property Episodes As ObservableCollection(Of StarzEpisodeInfo)
-        Get
-            Return _episodes
-        End Get
-        Set(value As ObservableCollection(Of StarzEpisodeInfo))
-            SetProperty(_episodes, value)
         End Set
     End Property
 
@@ -179,7 +177,7 @@ Public Class StarzShowInfoViewModel
         End Get
     End Property
 
-    Public ReadOnly Property ShowManageShowsCommand As ICommand
+    Public ReadOnly Property DisplayManageShowsCommand As ICommand
         Get
             Return New RelayCommand(Sub()
                                         ManageShowsVisibility = Visibility.Visible
@@ -199,10 +197,10 @@ Public Class StarzShowInfoViewModel
         Get
             Return New RelayCommand(
                 Sub()
-                    If Episodes Is Nothing Then
-                        Episodes = New ObservableCollection(Of StarzEpisodeInfo)
+                    If _episodes Is Nothing Then
+                        _episodes = New ObservableCollection(Of StarzEpisodeInfo)
                     Else
-                        Episodes.Clear()
+                        _episodes.Clear()
                     End If
                     Dim json = WebResources.DownloadString("https://www.starz.com/api/model.json?paths=[[""contentById""," & SelectedSeason.Id &
                                                        ",""childContent"",{""from"":0,""to"":" & SelectedSeason.NumberOfEpisodes - 1 &
@@ -212,10 +210,10 @@ Public Class StarzShowInfoViewModel
                     Dim eps = CType(contentById, JObject).PropertyValues.Select(Function(o) o.ToObject(Of StarzEpisodeInfo))
                     For Each ep In eps
                         If ep.ProperCaseTitle IsNot Nothing Then
-                            Episodes.Add(ep)
+                            _episodes.Add(ep)
                         End If
                     Next
-                    ''Episodes = CType(contentById, JObject).PropertyValues.Select(Function(o) o.ToObject(Of StarzEpisodeInfo)).ToList()
+                    ''EpisodesCollectionView.Refresh()
                 End Sub,
                 Function() As Boolean
                     Return SelectedSeason IsNot Nothing
@@ -269,6 +267,26 @@ Public Class StarzShowInfoViewModel
         End Get
     End Property
 
+    Public ReadOnly Property ViewEpisodeWebpageCommand As ICommand
+        Get
+            Return New RelayCommand(Of StarzEpisodeInfo)(
+                Sub(starzEp As StarzEpisodeInfo)
+                    Dim epUrl = "https://www.starz.com/series/" & SelectedShow.Id & "/episodes/" & starzEp.ContentId.Value & "/details"
+                    Process.Start(epUrl)
+                End Sub)
+        End Get
+    End Property
+
+    Public ReadOnly Property ViewShowWebpageCommand As ICommand
+        Get
+            Return New RelayCommand(Of ShowTitleId)(
+                Sub(starzShow As ShowTitleId)
+                    Dim showUrl = "https://www.starz.com/series/" & starzShow.Id
+                    Process.Start(showUrl)
+                End Sub)
+        End Get
+    End Property
+
 #End Region
 
 #Region " Private Methods "
@@ -312,8 +330,8 @@ Public Class StarzShowInfoViewModel
     End Function
 
     Private Sub OnSelectedSeasonChanged()
-        If Episodes IsNot Nothing Then
-            Episodes.Clear()
+        If _episodes IsNot Nothing Then
+            _episodes.Clear()
         End If
     End Sub
 
@@ -498,13 +516,6 @@ Public Class StarzShowInfoViewModel
 
 #End Region
 
-    Public Class ShowTitleId
-
-        Public Property Title As String
-        Public Property Id As Integer?
-
-    End Class
-
     Public Class StarzSeasonInformation
 
         Public Property Number As Integer?
@@ -524,5 +535,74 @@ Public Class StarzShowInfoViewModel
         Public Property Id As Integer?
         Public Property Message As String
     End Class
+
+End Class
+
+Public Class ShowTitleId
+
+    Public Property Title As String
+    Public Property Id As Integer?
+
+End Class
+
+Public Class ShowTitleIdSampleData
+
+    Public Property ShowListManageView As IList(Of ShowTitleId)
+
+    Public Sub New()
+        ShowListManageView = New List(Of ShowTitleId) From {
+            New ShowTitleId With {.Id = 12345, .Title = "Test Show 1"},
+            New ShowTitleId With {.Title = "Test Show 2"},
+            New ShowTitleId With {.Id = 12346, .Title = "Test Show 3"}
+        }
+    End Sub
+
+End Class
+
+Public Class StarzEpisodesSampleData
+
+    Public Property EpisodesCollectionView As IList(Of StarzShowInfoViewModel.StarzEpisodeInfo)
+
+    Public Sub New()
+        EpisodesCollectionView = New List(Of StarzShowInfoViewModel.StarzEpisodeInfo) From {
+            New StarzShowInfoViewModel.StarzEpisodeInfo With {
+                .Images = New StarzShowInfoViewModel.AtomImages() With {.Value = New StarzShowInfoViewModel.StarzImages() With {.LandscapeBg = "http://stz1.imgix.net/web/contentId/43919/type/STUDIO/dimension/2560x1440"}},
+                .ProperCaseTitle = New StarzShowInfoViewModel.AtomString() With {.Value = "Ep 201 - House On The Rock"},
+                .StartDate = New StarzShowInfoViewModel.AtomString() With {.Value = "03/10/2019 00:00:00"},
+                .LogLine = New StarzShowInfoViewModel.AtomString() With {.Value = "Following the epic showdown at Easter's party, Mr. Wednesday continues his quest to pitch the case for war to the Old Gods. Meanwhile, Mr. World plans revenge and Technical Boy goes on the hunt for Media."}
+            },
+            New StarzShowInfoViewModel.StarzEpisodeInfo With {
+                .Images = New StarzShowInfoViewModel.AtomImages() With {.Value = New StarzShowInfoViewModel.StarzImages() With {.LandscapeBg = "http://stz1.imgix.net/web/contentId/43945/type/STUDIO/dimension/2560x1440"}},
+                .ProperCaseTitle = New StarzShowInfoViewModel.AtomString() With {.Value = "Ep 202 - The Beguiling Man"},
+                .StartDate = New StarzShowInfoViewModel.AtomString() With {.Value = "03/17/2019 00:00:00"},
+                .LogLine = New StarzShowInfoViewModel.AtomString() With {.Value = "Promising vengeance for the death of a beloved old god, Mr. Wednesday begins preparation for a great battle. Meanwhile Laura and Mad Sweeney chase Shadow's diminishing light after he disappears."}
+            },
+            New StarzShowInfoViewModel.StarzEpisodeInfo With {
+                .Images = New StarzShowInfoViewModel.AtomImages() With {.Value = New StarzShowInfoViewModel.StarzImages() With {.LandscapeBg = "http://stz1.imgix.net/web/contentId/43966/type/STUDIO/dimension/2560x1440"}},
+                .ProperCaseTitle = New StarzShowInfoViewModel.AtomString() With {.Value = "Ep 203 - Muninn"},
+                .StartDate = New StarzShowInfoViewModel.AtomString() With {.Value = "03/24/2019 00:00:00"},
+                .LogLine = New StarzShowInfoViewModel.AtomString() With {.Value = "As he is tracked by Mr. World, Shadow makes his way to Cairo, thanks to a ride from Sam Black Crow. Mr. Wednesday slyly gains Laura's help in forging an alliance with a powerful god."}
+            },
+            New StarzShowInfoViewModel.StarzEpisodeInfo With {
+                .Images = New StarzShowInfoViewModel.AtomImages() With {.Value = New StarzShowInfoViewModel.StarzImages() With {.LandscapeBg = "http://stz1.imgix.net/web/contentId/43987/type/STUDIO/dimension/2560x1440"}},
+                .ProperCaseTitle = New StarzShowInfoViewModel.AtomString() With {.Value = "Ep 204 - The Greatest Story Ever Told"},
+                .StartDate = New StarzShowInfoViewModel.AtomString() With {.Value = "03/31/2019 00:00:00"},
+                .LogLine = New StarzShowInfoViewModel.AtomString() With {.Value = "While Shadow and Mr. Wednesday take a secret meeting in St. Louis, Bilquis arrives at the funeral home in Cairo, where she engages in a debate with Mr. Nancy and Mr. Ibis. Laura rejoins Mad Sweeney."}
+            },
+            New StarzShowInfoViewModel.StarzEpisodeInfo With {
+                .Images = New StarzShowInfoViewModel.AtomImages() With {.Value = New StarzShowInfoViewModel.StarzImages() With {.LandscapeBg = "http://stz1.imgix.net/web/contentId/44077/type/STUDIO/dimension/2560x1440"}},
+                .ProperCaseTitle = New StarzShowInfoViewModel.AtomString() With {.Value = "Ep 205 - The Ways Of The Dead"},
+                .StartDate = New StarzShowInfoViewModel.AtomString() With {.Value = "04/07/2019 00:00:00"},
+                .LogLine = New StarzShowInfoViewModel.AtomString() With {.Value = "Steeped in Cairo's history, Shadow learns the ways of the dead with the help of Mr. Ibis and Mr. Nancy. In New Orleans, Mad Sweeney introduces Laura to old friends who share their world of voodoo healing."}
+            },
+            New StarzShowInfoViewModel.StarzEpisodeInfo With {
+                .Images = New StarzShowInfoViewModel.AtomImages() With {.Value = New StarzShowInfoViewModel.StarzImages() With {.LandscapeBg = "http://stz1.imgix.net/web/contentId/44117/type/STUDIO/dimension/2560x1440"}},
+                .ProperCaseTitle = New StarzShowInfoViewModel.AtomString() With {.Value = "Ep 206 - Donar The Great"},
+                .StartDate = New StarzShowInfoViewModel.AtomString() With {.Value = "04/14/2019 00:00:00"},
+                .LogLine = New StarzShowInfoViewModel.AtomString() With {.Value = "Shadow and Mr. Wednesday seek out Dvalin to repair the Gungnir spear. But before the dwarf is able to etch the runes of war, he requires a powerful artifact in exchange."}
+            }
+        }
+    End Sub
+
 
 End Class
