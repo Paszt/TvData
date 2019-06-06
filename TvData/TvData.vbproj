@@ -125,10 +125,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\HBOScheduleViewModel.vb" />
     <Compile Include="ViewModels\StarzShowInfoViewModel.vb" />
     <Compile Include="ViewModels\SundanceTvViewModel.vb" />
     <Compile Include="ViewModels\VicelandViewModel.vb" />
     <Compile Include="ViewModels\ViewModelBase.vb" />
+    <Compile Include="Views\HBOWindow.xaml.vb">
+      <DependentUpon>HBOWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Themes\DataGridCellStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -219,6 +223,18 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ToolbarStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HBOScheduleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HBOWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\StarzManageShowsView.xaml">
       <SubType>Designer</SubType>

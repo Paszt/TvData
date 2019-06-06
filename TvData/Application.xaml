@@ -8,6 +8,7 @@
                 <ResourceDictionary Source="Themes/ControlStyles.xaml" />
                 <ResourceDictionary Source="Themes/DatePickerStyles.xaml" />
                 <ResourceDictionary Source="Themes/DataGridCellStyles.xaml" />
+                <ResourceDictionary Source="Themes/ToolbarStyles.xaml" />
                 <ResourceDictionary Source="Themes/ToolbarImages.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

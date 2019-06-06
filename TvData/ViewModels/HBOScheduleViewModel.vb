@@ -2,7 +2,7 @@
 Imports System.ComponentModel
 Imports TvData.Extensions
 
-Public Class SundanceTvViewModel
+Public Class HBOScheduleViewModel
     Inherits ViewModelBase
 
 #Region " Class Variables "
@@ -32,7 +32,7 @@ Public Class SundanceTvViewModel
         End Set
     End Property
 
-    Private _endDate As Date = Date.Now.AddDays(21)
+    Private _endDate As Date = Date.Now.AddDays(60)
     Public Property EndDate As Date
         Get
             Return _endDate
@@ -107,35 +107,35 @@ Public Class SundanceTvViewModel
 #Region " Methods "
 
     Private Sub ScrapeData()
-        Dim dte As Date = StartDate
-        EpisodesInner = New ObservableCollection(Of EpisodeSimple)
-        Do
-            Dim json = String.Empty
-            Using wcx As New WebClientEx
-                Try
-                    json = wcx.DownloadString(GetJsonUrl(dte))
-                Catch ex As Exception
-                End Try
-            End Using
-            Dim sundanceSchedule = json.FromJSON(Of SundanceTvSchedule)
-            For Each item In sundanceSchedule.ScheduleItem.Where(Function(i) i.Video.New = "yes" AndAlso i.Video.EpisodeSeason <> 0)
-                Dim ep As New EpisodeSimple With {
-                    .ShowName = item.Video.Title,
-                    .EpisodeName = item.Video.EpisodeTitle,
-                    .EpisodeNumber = item.Video.EpisodeNumber,
-                    .SeasonNumber = item.Video.EpisodeSeason,
-                    .FirstAired = item.Video.FirstAirDate,
-                    .Overview = item.Video.FullDescription}
-                EpisodesInner.Add(ep)
-            Next
+        'Dim dte As Date = StartDate
+        'EpisodesInner = New ObservableCollection(Of EpisodeSimple)
+        'Do
+        '    Dim json = String.Empty
+        '    Using wcx As New WebClientEx
+        '        Try
+        '            json = wcx.DownloadString(GetJsonUrl(dte))
+        '        Catch ex As Exception
+        '        End Try
+        '    End Using
+        '    Dim sundanceSchedule = json.FromJSON(Of SundanceTvSchedule)
+        '    For Each item In sundanceSchedule.ScheduleItem.Where(Function(i) i.Video.New = "yes" AndAlso i.Video.EpisodeSeason <> 0)
+        '        Dim ep As New EpisodeSimple With {
+        '            .ShowName = item.Video.Title,
+        '            .EpisodeName = item.Video.EpisodeTitle,
+        '            .EpisodeNumber = item.Video.EpisodeNumber,
+        '            .SeasonNumber = item.Video.EpisodeSeason,
+        '            .FirstAired = item.Video.FirstAirDate,
+        '            .Overview = item.Video.FullDescription}
+        '        EpisodesInner.Add(ep)
+        '    Next
 
-            'Dim daysEntries = json.FromJSONArray(Of VicelandScheduleEntry)()
-            'For Each daysEntry In daysEntries
-            '    EpisodesInner.Add(daysEntry)
-            'Next
-            dte = dte.AddDays(1)
-        Loop Until dte > EndDate
-        InitializeEpisodesCollecionViewSource()
+        '    'Dim daysEntries = json.FromJSONArray(Of VicelandScheduleEntry)()
+        '    'For Each daysEntry In daysEntries
+        '    '    EpisodesInner.Add(daysEntry)
+        '    'Next
+        '    dte = dte.AddDays(1)
+        'Loop Until dte > EndDate
+        'InitializeEpisodesCollecionViewSource()
     End Sub
 
     Private Sub InitializeEpisodesCollecionViewSource()
@@ -210,9 +210,9 @@ Public Class SundanceTvViewModel
 #Region " Helper Functions "
 
     Private Function GetJsonUrl(dte As Date) As String
-        'https://tribune.svc.ds.amcn.com/Sundance/OnAir/JSON?view=day&from=2018-3-1&tz=ET&bc=east&related=false&verbose=true&f=1.js
-        Dim format = "https://tribune.svc.ds.amcn.com/Sundance/OnAir/JSON?view=day&from={0}&tz=ET&bc=east&related=false&verbose=true&f=1.js"
-        Return String.Format(format, dte.Year.ToString("0000") & "-" & dte.Month.ToString("0") & "-" & dte.Day.ToString("0"))
+        'https://proxy-v4.cms.hbo.com/v1/schedule?date=2019-05-13&zone=east
+        Dim format = "https://proxy-v4.cms.hbo.com/v1/schedule?date={0}&zone=east"
+        Return String.Format(format, dte.ToIso8601DateString)
     End Function
 
 #End Region

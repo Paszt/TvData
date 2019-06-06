@@ -2597,6 +2597,14 @@ Public Class MainViewModel
         End Get
     End Property
 
+    Public ReadOnly Property OpenHBOWindowCommand As ICommand
+        Get
+            Return New RelayCommand(Sub()
+                                        My.Application.OpenHBOWindow()
+                                    End Sub)
+        End Get
+    End Property
+
     Public ReadOnly Property ConvertDateTitleCommand() As ICommand
         Get
             Return New RelayCommand(Sub()

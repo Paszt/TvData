@@ -65,12 +65,8 @@
         <!--Main View-->
         <DockPanel Focusable="False">
             <!--Top toolbar-->
-            <StackPanel Orientation="Horizontal"
-                        Margin="5,2"
-                        VerticalAlignment="Top"
-                        DockPanel.Dock="Top"
-                        KeyboardNavigation.IsTabStop="False"
-                        Focusable="False">
+            <ToolBar DockPanel.Dock="Top"
+                     ToolBarTray.IsLocked="True">
                 <Button Style="{DynamicResource ToolbarButtonStyle}"
                         ToolTip="Clear"
                         Command="{Binding ClearCommand}">
@@ -178,7 +174,7 @@
                            VerticalAlignment="Center"
                            Margin="5" />
                 <ComboBox Width="50"
-                          Height="22"
+                          Height="26"
                           SelectedItem="{Binding Language}"
                           ItemsSource="{Binding Iso639_1Values}"
                           Style="{DynamicResource StandardComboBox}"
@@ -192,7 +188,7 @@
                         ToolTip="Show XML"
                         Margin="5,0"
                         Command="{Binding ShowXmlCommand}" />
-                <Menu>
+                <Menu x:Name="ToolBarMenu">
                     <MenuItem Header="New"
                               Height="28">
                         <MenuItem Header="Episodes"
@@ -306,6 +302,20 @@
                     <Image Source="{DynamicResource StarzDrawingImage}"
                            Height="20" />
                 </Button>
+                <Button Style="{DynamicResource ToolbarButtonStyle}"
+                        Command="{Binding OpenHBOWindowCommand}"
+                        ToolTip="Open HBO Window">
+                    <Image Source="{DynamicResource HBODrawingImage}"
+                           Height="20" />
+                </Button>
+            </ToolBar>
+            <StackPanel Orientation="Horizontal"
+                        Margin="5,2"
+                        VerticalAlignment="Top"
+                        DockPanel.Dock="Top"
+                        KeyboardNavigation.IsTabStop="False"
+                        Focusable="False">
+
             </StackPanel>
             <!--StatusBar-->
             <StatusBar DockPanel.Dock="Bottom"
