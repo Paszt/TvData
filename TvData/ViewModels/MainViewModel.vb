@@ -2141,9 +2141,13 @@ Public Class MainViewModel
 
     Public ReadOnly Property CopyXmlCommand() As ICommand
         Get
-            Return New RelayCommand(Sub()
-                                        My.Computer.Clipboard.SetText(Data.ToString())
-                                    End Sub)
+            Return New RelayCommand(
+                Sub()
+                    Data.Episodes = New TrulyObservableCollection(Of Episode)(
+                                            Data.Episodes.OrderBy(Function(e) e.SeasonNumber).
+                                                          ThenBy(Function(e) e.EpisodeNumber))
+                    My.Computer.Clipboard.SetText(Data.ToString())
+                End Sub)
         End Get
     End Property
 
@@ -2151,7 +2155,10 @@ Public Class MainViewModel
         Get
             Return New RelayCommand(
                 Sub()
-                    Dim selectedEpisodes = Data.Episodes.Where(Function(e) e.IsSelected = True).ToList()
+                    Dim selectedEpisodes = Data.Episodes.Where(Function(e) e.IsSelected = True).
+                                                         OrderBy(Function(e) e.SeasonNumber).
+                                                         ThenBy(Function(e) e.EpisodeNumber).
+                                                         ToList()
                     If selectedEpisodes.Count > 0 Then
                         Dim series As New TVSeries() With {.SeriesInfo = Data.SeriesInfo}
                         For Each ep In selectedEpisodes

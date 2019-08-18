@@ -63,6 +63,15 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ReadonlyTextbox"
+           TargetType="{x:Type TextBox}"
+           BasedOn="{StaticResource StandardTextBox}">
+        <Setter Property="IsReadOnly"
+                Value="True" />
+        <Setter Property="Background"
+                Value="Transparent" />
+    </Style>
+
     <Style x:Key="GridCellTextBox"
            TargetType="{x:Type TextBox}"
            BasedOn="{StaticResource StandardTextBox}">
