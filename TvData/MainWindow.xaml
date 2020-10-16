@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="clr-namespace:TvData"
                   xmlns:behaviors="clr-namespace:TvData.Behaviors"
-                  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                   xmlns:views="clr-namespace:TvData.Views"
                   Cursor="{Binding Cursor}"
                   TitlebarHeight="40"

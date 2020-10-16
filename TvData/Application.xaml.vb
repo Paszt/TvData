@@ -31,14 +31,14 @@ Class Application
                 End Sub
             mainVM.ConfigureHttpListener()
             'Set Toolbar MenuItem Style
-            Dim darkMenuItemStyle = CType(Current.FindResource("DarkMenuItem"), Style)
+            Dim darkMenuItemStyle As Style = CType(Current.FindResource("DarkMenuItem"), Style)
             For Each mi As MenuItem In mainWin.ToolBarMenu.Items
                 mi.Style = darkMenuItemStyle
             Next
             mainWin.Show()
 
             If e.Args.Length > 0 AndAlso IO.File.Exists(e.Args(0)) Then
-                Dim mvm = CType(mainWin.DataContext, MainViewModel)
+                Dim mvm As MainViewModel = CType(mainWin.DataContext, MainViewModel)
                 mvm.LoadFromFile(e.Args(0))
             End If
         End If

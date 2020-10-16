@@ -9,8 +9,8 @@ Module HelperExtensions
         If DateTime.TryParse(originalDateString, dte) Then
             Return dte.ToString("yyyy-MM-dd")
         Else
-            Dim modifiedDateString = originalDateString
-            For Each tz In timeZones
+            Dim modifiedDateString As String = originalDateString
+            For Each tz As KeyValuePair(Of String, String) In timeZones
                 modifiedDateString = modifiedDateString.Replace(tz.Key, tz.Value)
             Next
             If DateTime.TryParse(modifiedDateString, dte) Then

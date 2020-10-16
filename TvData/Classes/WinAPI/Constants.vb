@@ -8,7 +8,7 @@
     Public Const WM_NCPAINT As Integer = &H85
     Public Const WM_NCACTIVATE As Integer = &H86
     Public Const WM_GETMINMAXINFO As Integer = &H24
-    Public Const WM_WINDOWPOSCHANGING = &H46
+    Public Const WM_WINDOWPOSCHANGING As Integer = &H46
     Public Const WM_CREATE As Integer = &H1
     Public Const WS_MAXIMIZE As Long = &H1000000
     Public Const GCLP_HBRBACKGROUND As Integer = -&HA

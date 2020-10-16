@@ -25,7 +25,7 @@ Public Class AlternativeInfoRetriever
         Else
             'read from clipboard and deserialize
             Dim x As New XmlSerializer(GetType(TVSeries))
-            Using reader As TextReader = New StringReader(Clipboard.GetText(TextDataFormat.Text))
+            Using reader As TextReader = New StringReader(Clipboard.GetText(TextDataFormat.UnicodeText))
                 Try
                     altData = CType(x.Deserialize(reader), TVSeries)
                 Catch ex As Exception
@@ -39,11 +39,11 @@ Public Class AlternativeInfoRetriever
             End Using
         End If
 
-        Dim existingSeasons = (From eps In episodes Where eps.SeasonNumber <> 0 Select eps.SeasonNumber Distinct).ToList()
-        For Each ep In altData.Episodes
+        Dim existingSeasons As List(Of Short) = (From eps In episodes Where eps.SeasonNumber <> 0 Select eps.SeasonNumber Distinct).ToList()
+        For Each ep As Episode In altData.Episodes
             If existingSeasons.Contains(ep.SeasonNumber) Then
-                Dim existingEpisode = (From e In episodes
-                                       Where e.SeasonNumber = ep.SeasonNumber AndAlso
+                Dim existingEpisode As Episode = (From e In episodes
+                                                  Where e.SeasonNumber = ep.SeasonNumber AndAlso
                                          e.EpisodeNumber = ep.EpisodeNumber).FirstOrDefault()
                 If existingEpisode IsNot Nothing Then
                     existingEpisode.Alternative_AiredDate = ep.FirstAired

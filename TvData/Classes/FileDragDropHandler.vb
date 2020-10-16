@@ -1,6 +1,4 @@
-﻿Imports System.Windows.Interactivity
-
-Interface IFileDragDropTarget
+﻿Interface IFileDragDropTarget
 
     Sub OnFileDrop(ByVal filepaths As String())
 
@@ -54,7 +52,7 @@ Public Class FileDragDropHandler
 
     Private Shared Sub OnEnabled(ByVal d As DependencyObject, ByVal e As DependencyPropertyChangedEventArgs)
         If e.NewValue Is e.OldValue Then Return
-        Dim control = TryCast(d, Control)
+        Dim control As Control = TryCast(d, Control)
         If control IsNot Nothing Then AddHandler control.Drop, AddressOf OnDrop
     End Sub
 

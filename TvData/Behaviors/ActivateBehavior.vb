@@ -1,4 +1,4 @@
-﻿Imports System.Windows.Interactivity
+﻿Imports Microsoft.Xaml.Behaviors
 
 Namespace Behaviors
 
@@ -22,7 +22,7 @@ Namespace Behaviors
         End Property
 
         Private Shared Sub OnActivatedChanged(dependencyObject As DependencyObject, e As DependencyPropertyChangedEventArgs)
-            Dim behavior = DirectCast(dependencyObject, ActivateBehavior)
+            Dim behavior As ActivateBehavior = DirectCast(dependencyObject, ActivateBehavior)
             If Not behavior.Activated OrElse behavior.isActivated Then
                 Return
             End If
