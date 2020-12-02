@@ -1883,12 +1883,12 @@ Public Class MainViewModel
             Exit Sub
         End If
         Dim id = latestShow.id
-        Dim gate = New RateGate(40, TimeSpan.FromSeconds(10))
+        'Dim gate = New RateGate(40, TimeSpan.FromSeconds(10))
         Dim showCount = 1
         Do
             showCount += 1
             StatusText = String.Format("Getting show {0} of 20", showCount)
-            gate.WaitToProceed()
+            'gate.WaitToProceed()
             id -= 1
             Dim show = tmdb.GetTvShow(id)
             If show IsNot Nothing Then
@@ -3436,7 +3436,7 @@ Public Class MainViewModel
 
     Protected Overrides Sub Finalize()
         MyBase.Finalize()
-        tmdb.Dispose()
+        'tmdb.Dispose()
         CloseListener()
     End Sub
 

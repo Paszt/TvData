@@ -2,13 +2,13 @@
 Imports TvData.Extensions
 
 Public Class TmdbApi
-    Implements IDisposable
+    'Implements IDisposable
 
 #Region " Declarations "
 
     Public Const ApiKey As String = "03fab28c05313508eae7d69064ba1612"
 
-    Private rg As Infrastructure.RateGate = New Infrastructure.RateGate(38, TimeSpan.FromSeconds(10))
+    'Private rg As Infrastructure.RateGate = New Infrastructure.RateGate(38, TimeSpan.FromSeconds(10))
 
 #End Region
 
@@ -180,7 +180,7 @@ Public Class TmdbApi
 
     Private Function GetApiResponse(url As String) As String
         Dim responseJsonString As String = String.Empty
-        rg.WaitToProceed()
+        'rg.WaitToProceed()
         Using wce As New WebClientEx
             Try
                 responseJsonString = wce.DownloadString(url)
@@ -191,38 +191,38 @@ Public Class TmdbApi
     End Function
 
 #Region "IDisposable Support"
-    Private disposedValue As Boolean ' To detect redundant calls
+    'Private disposedValue As Boolean ' To detect redundant calls
 
-    ' IDisposable
-    Protected Overridable Sub Dispose(disposing As Boolean)
-        If Not disposedValue Then
-            If disposing Then
-                ' TODO: dispose managed state (managed objects).
-                If rg IsNot Nothing Then
-                    rg.Dispose()
-                End If
-            End If
+    '' IDisposable
+    'Protected Overridable Sub Dispose(disposing As Boolean)
+    '    If Not disposedValue Then
+    '        If disposing Then
+    '            ' TODO: dispose managed state (managed objects).
+    '            If rg IsNot Nothing Then
+    '                rg.Dispose()
+    '            End If
+    '        End If
 
-            ' TODO: free unmanaged resources (unmanaged objects) and override Finalize() below.
-            ' TODO: set large fields to null.
-        End If
-        disposedValue = True
-    End Sub
-
-    ' TODO: override Finalize() only if Dispose(disposing As Boolean) above has code to free unmanaged resources.
-    'Protected Overrides Sub Finalize()
-    '    ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
-    '    Dispose(False)
-    '    MyBase.Finalize()
+    '        ' TODO: free unmanaged resources (unmanaged objects) and override Finalize() below.
+    '        ' TODO: set large fields to null.
+    '    End If
+    '    disposedValue = True
     'End Sub
 
-    ' This code added by Visual Basic to correctly implement the disposable pattern.
-    Public Sub Dispose() Implements IDisposable.Dispose
-        ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
-        Dispose(True)
-        ' TODO: uncomment the following line if Finalize() is overridden above.
-        ' GC.SuppressFinalize(Me)
-    End Sub
+    '' TODO: override Finalize() only if Dispose(disposing As Boolean) above has code to free unmanaged resources.
+    ''Protected Overrides Sub Finalize()
+    ''    ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+    ''    Dispose(False)
+    ''    MyBase.Finalize()
+    ''End Sub
+
+    '' This code added by Visual Basic to correctly implement the disposable pattern.
+    'Public Sub Dispose() Implements IDisposable.Dispose
+    '    ' Do not change this code.  Put cleanup code in Dispose(disposing As Boolean) above.
+    '    Dispose(True)
+    '    ' TODO: uncomment the following line if Finalize() is overridden above.
+    '    ' GC.SuppressFinalize(Me)
+    'End Sub
 #End Region
 
 End Class

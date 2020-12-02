@@ -60,7 +60,7 @@ Public Class TmdbInfoRetriever
                     If existingEpisode IsNot Nothing Then
                         existingEpisode.TMDB_AiredDate = episode.air_date
                         existingEpisode.TMDB_Overview = episode.overview
-                        existingEpisode.TMDB_EpisodeName = episode.name.Trim()
+                        existingEpisode.TMDB_EpisodeName = episode.name?.Trim()
                         existingEpisode.TMDB_ImdbId = episode.external_ids.imdb_id
                         If episode.production_code IsNot Nothing Then
                             existingEpisode.TMDB_ProductionCode = episode.production_code

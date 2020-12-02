@@ -769,7 +769,7 @@ Partial Public Class Episode
             Return Me.tMDB_EpisodeNameField
         End Get
         Set(value As String)
-            Me.tMDB_EpisodeNameField = value.Trim()
+            Me.tMDB_EpisodeNameField = value?.Trim()
             RaisePropertyChanged("TMDB_EpisodeName")
         End Set
     End Property
@@ -1081,7 +1081,7 @@ Partial Public Class Episode
         Dim errorString As String = String.Empty
         Select Case propertyName
             Case "TMDB_EpisodeName"
-                If Not String.IsNullOrWhiteSpace(TMDB_EpisodeName.Trim()) AndAlso Not TMDB_EpisodeName.Equals(EpisodeName) Then
+                If Not String.IsNullOrWhiteSpace(TMDB_EpisodeName?.Trim()) AndAlso Not TMDB_EpisodeName?.Equals(EpisodeName) Then
                     errorString = "Differs from TVDb"
                 End If
             Case "IMDB_EpisodeName"
