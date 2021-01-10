@@ -1000,7 +1000,7 @@ Public Class MainViewModel
             OptionsVisibility = Visibility.Visible
         End If
 
-        If ComponentModel.DesignerProperties.GetIsInDesignMode(New DependencyObject) Then
+        If DesignerProperties.GetIsInDesignMode(New DependencyObject) Then
             TmdbNewTvShows = New ObservableCollection(Of TmdbApi.TvShow)
             Dim show1 = New TmdbApi.TvShow() With {.name = "Show1", .id = 134560, .poster_path = "/45Mup5w7a5pEfJ9ztWtdTLJhOGq.jpg"}
             TmdbNewTvShows.Add(show1)
@@ -1063,6 +1063,7 @@ Public Class MainViewModel
         EpisodesCollectionView.SortDescriptions.Clear()
         EpisodesCollectionView.SortDescriptions.Add(New SortDescription("SeasonNumber", ListSortDirection.Ascending))
         EpisodesCollectionView.SortDescriptions.Add(New SortDescription("EpisodeNumber", ListSortDirection.Ascending))
+        EpisodesCollectionView.SortDescriptions.Add(New SortDescription("FirstAired", ListSortDirection.Ascending))
     End Sub
 
 #Region " Save/Load To/From File"
